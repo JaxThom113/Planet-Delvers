@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 
-public class Demo_FloodFill : MonoBehaviour
+public class Demo_RegionMap : MonoBehaviour
 {
     [Header("Settings")]
     [Range(0, 5)]
@@ -146,7 +146,7 @@ public class Demo_FloodFill : MonoBehaviour
             mapTilemap.SetTile(new Vector3Int(startingRoom.x, startingRoom.y, 0), regionTiles[5]);
         }
 
-        // if regions aren'y adjacent in the correct way, try again
+        // if regions aren't adjacent in the correct way, try again
         if (!EnsureProgression())
         {
             Debug.Log("Failed Attempt #" + attemptNum + " - Regions do not touch");

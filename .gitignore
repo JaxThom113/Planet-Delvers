@@ -105,4 +105,9 @@ InitTestScene*.unity*
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
 
+# Pre-generated Unity vscode files
 *.vscode
+
+# Ignore contents of Cache, but not the folder itself
+/[Cc]ache/*
+!/[Cc]ache/.gitkeep

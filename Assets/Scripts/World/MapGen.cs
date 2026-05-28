@@ -4,8 +4,17 @@ using UnityEngine;
 
 /*
 
-This script generates a 16x16 grid to define a world map. Each number corresponds
-to a region type, 
+This script generates a map grid to define a world map. Each number corresponds
+to a region type. There are 3 layers to generation: MapGrid, RegionGrind, and 
+StructureGrid.
+
+Region types:
+0 = empty
+1 = first region
+2 = second region
+3 = third region
+4 = fourth region
+5 = starting room
 
 Example Region Grid:
 
@@ -26,8 +35,26 @@ Example Region Grid:
 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2
 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2
 
-*/
+Example Structure Grid:
 
+0 4 4 4 0 0 0 0 0 0 0 0 3 0 0 0
+0 0 0 4 0 0 0 0 0 3 3 3 3 3 3 3
+0 0 0 4 4 4 4 0 0 3 0 0 0 0 0 3
+0 0 0 4 4 0 0 0 0 3 3 3 3 0 0 3
+0 0 0 0 4 4 0 0 0 0 0 0 3 3 3 3
+0 0 0 0 4 4 0 0 3 3 3 3 3 0 0 3
+0 0 0 0 0 4 0 0 3 0 0 0 3 0 0 3
+1 1 1 1 1 5 3 3 3 3 3 3 3 3 3 3
+1 0 0 0 0 2 2 2 0 0 0 0 0 3 0 0
+1 0 0 0 0 0 0 2 2 2 0 0 0 3 3 3
+1 1 1 1 0 0 0 2 2 2 0 0 0 0 0 0
+0 0 0 1 0 0 0 0 0 2 0 0 0 0 0 0
+0 1 1 1 1 1 0 0 0 2 2 2 2 2 2 0
+0 1 0 1 0 1 0 0 0 2 2 2 0 0 0 0
+0 1 0 0 0 1 1 1 2 2 0 0 0 0 0 0
+1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0
+
+*/
 
 public struct MapTile
 {
@@ -39,48 +66,65 @@ public struct MapTile
 
 public static class MapGen
 {
-    /*
-        Region types:
-        0 = empty
-        1 = first region
-        2 = second region
-        3 = third region
-        4 = fourth region
-        5 = starting room
-    */
+    // dimensions of map grid, square
+    public static int GridSize { get; private set; }
+
+    // used to divide map into different regions to set bounds for generation
+    public static List<List<int>> RegionGrid { get; private set; }
+
+    // used for room generation
+    public static List<List<int>> StructureGrid { get; private set; }
 
     // main map grid
     public static List<List<MapTile>> MapGrid { get; private set; }
-    public static int GridSize { get; private set; }
-    
-    // used for room generation
-    public static List<List<int>> structureGrid;
-
-    // used to divide map into different regions to set bounds for generation
-    public static List<List<int>> regionGrid;
 
     public static void GenerateMap()
     {
-        // Step #1: Create empty world grid
-        CreateWorld();
+        GridSize = 16;
 
-        // Step #2: Set start point and establish regions
+        // Step #1: Establish regions and set start point
         CreateRegions();
 
-        // Step #3: Generate structures for each region within their bounds
-        GenerateStructures();
+        // Step #2: Generate structures for each region within their bounds
+        CreateStructures();
+
+        // Step #3: Create MapGrid
+        CreateMap();
 
         // Step #4: Connect cells to create rooms
         AddConnections();
 
         // Step #5: Add doors to connect rooms
         AddDoors();
+
+        // Step #6: Save map data to cache
+        CacheMapData();
     }
 
-    private static void CreateWorld()
+    private static void CreateRegions()
     {
-        GridSize = 16;
+        // use flood fill to create 4 regions
+        RegionGrid = FloodFill.FloodFillRegions();
+    }
 
+    private static void CreateStructures()
+    {
+        List<Vector2Int> regionTiles;
+
+        // use a randomly picked algorithm to generate unique structures in each region
+        for (int region = 1; region <= 4; region++)
+        {
+            regionTiles = MapGenUtility.GetTilesOfRegion(RegionGrid, region);
+
+            if (Random.Range(0, 2) == 0)
+                StructureGrid = Dfs.DfsGenerate(RegionGrid, regionTiles, region);
+            else
+                StructureGrid = RandomWalk.RandomWalkGenerate(RegionGrid, regionTiles, region);
+        }
+    }
+
+    private static void CreateMap()
+    {
         // set up empty map grid
         MapGrid = new List<List<MapTile>>();
         for (int y = 0; y < GridSize; y++)
@@ -99,16 +143,6 @@ public static class MapGen
         }
     }
 
-    private static void CreateRegions()
-    {
-        structureGrid = FloodFill.FloodFillRegions();
-    }
-
-    private static void GenerateStructures()
-    {
-        return;
-    }
-
     private static void AddConnections()
     {
         return;
@@ -117,5 +151,10 @@ public static class MapGen
     private static void AddDoors()
     {
         return;
+    }
+
+    private static void CacheMapData()
+    {
+        CsvUtility.SaveGridToCSV(RegionGrid, "region_grid.csv");
     }
 }

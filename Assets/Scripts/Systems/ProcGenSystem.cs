@@ -8,13 +8,11 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
     [SerializeField] private List<Tile> levelTiles;
     [SerializeField] private List<Tile> mapTiles;
 
-    // Start is called before the first frame update
     void Start()
     {
-        
+        MapGen.GenerateMap();
     }
 
-    // Update is called once per frame
     void Update()
     {
         
