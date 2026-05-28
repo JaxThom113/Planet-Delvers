@@ -22,7 +22,8 @@ public class Demo_StructureMap : MonoBehaviour
 
     // grid size must be defined here because MapGen isn't run in the demo scene
     private const int GRID_SIZE = 16;
-    private int attemptNum;
+    private int regionGenAttempts;
+    private int structureGenAttempts;
     private Vector2Int startingRoom;
 
     private struct Quadrant
@@ -61,7 +62,8 @@ public class Demo_StructureMap : MonoBehaviour
         regionTilemap.ClearAllTiles();
         structureTilemap.ClearAllTiles();
 
-        attemptNum = 1;
+        regionGenAttempts = 1;
+        structureGenAttempts = 1;
 
         // make sure to save the random seed number for the player's reference
         if (!seededRun)
@@ -76,6 +78,9 @@ public class Demo_StructureMap : MonoBehaviour
     {
         yield return StartCoroutine(FloodFillRegions());
         yield return StartCoroutine(CreateStructures());
+        
+        Debug.Log("Generation Complete!");
+        runButton.interactable = true;
     }
 
     private IEnumerator FloodFillRegions()
@@ -149,7 +154,7 @@ public class Demo_StructureMap : MonoBehaviour
         }
 
         // set start room location somewhere in region 1
-        List<Vector2Int> region1Tiles = GetTilesOfRegion(1);
+        List<Vector2Int> region1Tiles = GetTiles(regionTilemap, regionTiles, 1);
         if (region1Tiles.Count > 0)
         {
             startingRoom = region1Tiles[UnityEngine.Random.Range(0, region1Tiles.Count)];
@@ -157,55 +162,91 @@ public class Demo_StructureMap : MonoBehaviour
         }
 
         // if regions aren't adjacent in the correct way, try again
-        if (!EnsureProgression())
+        if (!EnsureProgression(regionTilemap, regionTiles))
         {
-            Debug.Log("Failed Attempt #" + attemptNum + " - Regions do not touch");
-            attemptNum++;
+            Debug.Log("Failed RegionGen Attempt #" + regionGenAttempts + " - Regions do not touch");
+            regionGenAttempts++;
             regionTilemap.ClearAllTiles();
-            StartCoroutine(FloodFillRegions());
+            yield return StartCoroutine(FloodFillRegions());
         }
-
-        runButton.interactable = true;
     }
 
     private IEnumerator CreateStructures()
     {
-        List<Vector2Int> regionTiles;
+        // remember to add starting room location
+        structureTilemap.SetTile(new Vector3Int(startingRoom.x, startingRoom.y, 0), structureTiles[5]);
+
+        // make a list of alrgorithms to pick from
+        List<Func<List<Vector2Int>, int, Vector2Int, IEnumerator>> algorithms = new List<Func<List<Vector2Int>, int, Vector2Int, IEnumerator>>()
+        {
+            (regionTiles, region, seed) => RandomWalkGenerate(regionTiles, region, seed),
+            (regionTiles, region, seed) => DfsGenerate(regionTiles, region, seed),
+        };
 
         // use a randomly picked algorithm to generate unique structures in each region
         for (int region = 1; region <= 4; region++)
         {
-            regionTiles = GetTilesOfRegion(region);
+            List<Vector2Int> targetRegionTiles = GetTiles(regionTilemap, regionTiles, region);
+            Vector2Int seed = targetRegionTiles[UnityEngine.Random.Range(0, targetRegionTiles.Count)];
 
-            if (UnityEngine.Random.Range(0, 2) == 0)
+            // Progression rules:
+            // 1 must be touching 2
+            // 2 must be touching 1
+            // 3 must be touching 1 or 2
+            // 4 must be touching 1 or 2 or 3
+
+            // go through random order in list of algorithms until one works
+            bool success = false;
+            while (!success)
             {
-                if (region == 1)
-                    StartCoroutine(DfsGenerate(regionTiles, region, startingRoom.y, startingRoom.x));
-                    
-                Vector2Int seed = regionTiles[UnityEngine.Random.Range(0, regionTiles.Count)];
-                StartCoroutine(DfsGenerate(regionTiles, region, seed.y, seed.x));
-            }
-            else
-            {
-                if (region == 1)
-                    StartCoroutine(RandomWalkGenerate(regionTiles, region, startingRoom));
-                
-                Vector2Int seed = regionTiles[UnityEngine.Random.Range(0, regionTiles.Count)];
-                StartCoroutine(RandomWalkGenerate(regionTiles, region, seed));
+                Shuffle(algorithms);
+
+                foreach (var algorithm in algorithms)
+                {
+                    if (region == 1)
+                        yield return StartCoroutine(algorithm(targetRegionTiles, region, startingRoom));
+                    else
+                        yield return StartCoroutine(algorithm(targetRegionTiles, region, seed));
+
+                    bool structure1TouchesRegion2 = IsStructureAdjacentToRegion(1, 2);
+                    bool structure2TouchesRegion1 = IsStructureAdjacentToRegion(2, 1);
+                    bool structure3TouchesRegion1Or2 = IsStructureAdjacentToRegion(3, 1) || IsStructureAdjacentToRegion(3, 2);
+                    bool structure4TouchesAnyRegion = IsStructureAdjacentToRegion(4, 1) || IsStructureAdjacentToRegion(4, 2) || IsStructureAdjacentToRegion(4, 3);
+
+                    // if the conditions for a certain regions succeed, count as success and move on to next region
+                    if (region == 1 && structure1TouchesRegion2 ||
+                        region == 2 && structure2TouchesRegion1 ||
+                        region == 3 && structure3TouchesRegion1Or2 ||
+                        region == 4 && structure4TouchesAnyRegion)
+                    {
+                        success = true;
+                        break;
+                    }
+                    else
+                    {
+                        Debug.Log("Failed StructureGen Attempt #" + structureGenAttempts + " - Region " + region + " structure not touching required adjacent Regions");
+                        structureGenAttempts++;
+                        ClearStructureTiles(region);
+                    }
+                }
             }
         }
 
-        // remember to add starting room location
-        structureTilemap.SetTile(new Vector3Int(startingRoom.x, startingRoom.y, 0), structureTiles[5]);
-
-        yield return null;
+        // similar to regions, if structures aren't adjacent in the correct way, try again
+        if (!EnsureProgression(structureTilemap, structureTiles))
+        {
+            Debug.Log("Failed StructureGen Attempt #" + structureGenAttempts + " - Structures do not touch properly");
+            structureGenAttempts++;
+            structureTilemap.ClearAllTiles();
+            yield return StartCoroutine(CreateStructures());
+        }
     }
 
-    private IEnumerator DfsGenerate(List<Vector2Int> regionTiles, int region, int y = 0, int x = 0)
+    private IEnumerator DfsGenerate(List<Vector2Int> regionTiles, int region, Vector2Int pos)
     {
         yield return new WaitForSeconds(delay);
 
-        Vector2Int current = new Vector2Int(x, y);
+        Vector2Int current = new Vector2Int(pos.x, pos.y);
 
         Vector2Int[] doubledDirections =
         {
@@ -229,10 +270,11 @@ public class Demo_StructureMap : MonoBehaviour
                 if (structureTilemap.GetTile(new Vector3Int(next.x, next.y, 0)) == null) // unvisited
                 {
                     // carve path between current and neighbor
-                    structureTilemap.SetTile(new Vector3Int(x + dir.x / 2, y + dir.y / 2, 0), structureTiles[region]);
+                    structureTilemap.SetTile(new Vector3Int(pos.x + dir.x / 2, pos.y + dir.y / 2, 0), structureTiles[region]);
                     structureTilemap.SetTile(new Vector3Int(next.x, next.y, 0), structureTiles[region]);
 
-                    StartCoroutine(DfsGenerate(regionTiles, region, next.y, next.x));
+                    // yield return needs to be here because this is a recursive function
+                    yield return StartCoroutine(DfsGenerate(regionTiles, region, new Vector2Int(next.x, next.y)));
                 }
             }
         }
@@ -241,15 +283,16 @@ public class Demo_StructureMap : MonoBehaviour
     private IEnumerator RandomWalkGenerate(List<Vector2Int> regionTiles, int region, Vector2Int seed)
     {
         // random walk could fill a 4th of the region at the low end, full region at high end
-        int pathLength = UnityEngine.Random.Range(regionTiles.Count / 2, regionTiles.Count);
+        int pathLength = regionTiles.Count;
+        // int pathLength = UnityEngine.Random.Range(regionTiles.Count / 2, regionTiles.Count);
 
         Vector2Int current = new Vector2Int(seed.x, seed.y);
+        List<Vector2Int> dirs = new List<Vector2Int>(directions);
 
         for (int i = 0; i < pathLength; i++)
         {
             yield return new WaitForSeconds(delay);
 
-            List<Vector2Int> dirs = new List<Vector2Int>(directions);
             Shuffle(dirs);
 
             Vector2Int next = current;
@@ -334,37 +377,38 @@ public class Demo_StructureMap : MonoBehaviour
         return seeds;
     }
 
-    private List<Vector2Int> GetTilesOfRegion(int region)
+    private List<Vector2Int> GetTiles(Tilemap map, Tile[] tiles, int region)
     {
         // add all tile of region to a list and return
-        List<Vector2Int> tiles = new List<Vector2Int>();
-        Tile targetTile = regionTiles[region];
+        List<Vector2Int> foundTiles = new List<Vector2Int>();
+        Tile targetTile = tiles[region];
 
         for (int x = 0; x < GRID_SIZE; x++)
         {
             for (int y = 0; y < GRID_SIZE; y++)
             {
-                if (regionTilemap.GetTile(new Vector3Int(x, y, 0)) == targetTile)
-                    tiles.Add(new Vector2Int(x, y));
+                if (map.GetTile(new Vector3Int(x, y, 0)) == targetTile)
+                    foundTiles.Add(new Vector2Int(x, y));
             }
         }
 
-        return tiles;
+        return foundTiles;
     }
 
-    private bool EnsureProgression()
+    private bool EnsureProgression(Tilemap map, Tile[] tiles)
     {
-        bool region1TouchesRegion2 = AreRegionsAdjacent(1, 2);
-        bool region3TouchesRegion1Or2 = AreRegionsAdjacent(3, 1) || AreRegionsAdjacent(3, 2);
+        bool region2TouchesRegion1 = AreTilesAdjacent(map, tiles, 1, 2);
+        bool region3TouchesRegion1Or2 = AreTilesAdjacent(map, tiles, 3, 1) || AreTilesAdjacent(map, tiles, 3, 2);
+        bool region4TouchesAnyRegion = AreTilesAdjacent(map, tiles, 4, 1) || AreTilesAdjacent(map, tiles, 4, 2) || AreTilesAdjacent(map, tiles, 4, 3);
         
-        return region1TouchesRegion2 && region3TouchesRegion1Or2;
+        return region2TouchesRegion1 && region3TouchesRegion1Or2 && region4TouchesAnyRegion;
     }
 
-    private bool AreRegionsAdjacent(int regionA, int regionB)
+    private bool AreTilesAdjacent(Tilemap map, Tile[] tiles, int regionA, int regionB)
     {
         // check all tiles of a region against a target region
-        List<Vector2Int> tilesA = GetTilesOfRegion(regionA);
-        Tile targetTileB = regionTiles[regionB];
+        List<Vector2Int> tilesA = GetTiles(map, tiles, regionA);
+        Tile targetTileB = tiles[regionB];
 
         foreach (Vector2Int tileA in tilesA)
         {
@@ -377,12 +421,48 @@ public class Demo_StructureMap : MonoBehaviour
                     continue;
 
                 // if the regions touch at a single point,, return true
-                if (regionTilemap.GetTile(new Vector3Int(neighbor.x, neighbor.y, 0)) == targetTileB)
+                if (map.GetTile(new Vector3Int(neighbor.x, neighbor.y, 0)) == targetTileB)
                     return true;
             }
         }
 
         // if no tiles touch, regions are not adjacent
         return false;
+    }
+
+    private bool IsStructureAdjacentToRegion(int structureRegion, int region)
+    {
+        // check all tiles of a structure region against a target region
+        List<Vector2Int> structureRegionTiles = GetTiles(structureTilemap, structureTiles, structureRegion);
+        Tile targetRegionTile = regionTiles[region];
+
+        foreach (Vector2Int tile in structureRegionTiles)
+        {
+            // check all 4 neighbors of this tile
+            foreach (Vector2Int dir in directions)
+            {
+                Vector2Int neighbor = tile + dir;
+
+                if (!InBounds(neighbor))
+                    continue;
+
+                // if the structure tile is adjacent to the region tile, return true
+                if (regionTilemap.GetTile(new Vector3Int(neighbor.x, neighbor.y, 0)) == targetRegionTile)
+                    return true;
+            }
+        }
+
+        // if no tiles touch, structure is not adjacent to the region
+        return false;
+    }
+
+    private void ClearStructureTiles(int region)
+    {
+        List<Vector2Int> tiles = GetTiles(structureTilemap, structureTiles, region);
+
+        foreach (Vector2Int tile in tiles)
+        {
+            structureTilemap.SetTile(new Vector3Int(tile.x, tile.y, 0), null);
+        }
     }
 }

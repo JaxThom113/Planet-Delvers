@@ -595,7 +595,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1fb0ef7a69f90c40a34e86f1a448522, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  delay: 0.05
+  delay: 0
   seededRun: 0
   seed: 0
   runButton: {fileID: 401967460}
