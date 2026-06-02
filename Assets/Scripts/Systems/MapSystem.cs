@@ -5,59 +5,29 @@ using UnityEngine.InputSystem;
 
 public class MapSystem : MonoBehaviour
 {
-	[SerializeField] private GameObject map;
+	[SerializeField] private GameObject inventoryMenu;
+	[SerializeField] private GameObject mapTab;
 	[SerializeField] private GameObject mapCamera;
     [Range(5, 15)]
 	[SerializeField] private float speed;
-    private bool mapPressed;
 
-    private bool buttonMap;
 	private Vector2 movementInput = Vector2.zero;
-
-    public void OnMap(InputAction.CallbackContext context)
-    {
-        buttonMap = context.action.triggered;
-    }
 
     public void OnMove(InputAction.CallbackContext context)
     {
         movementInput = context.ReadValue<Vector2>();
     }
 
-    void Start()
-    {
-        map.SetActive(false);
-        GameData.mapActive = false;
-    }
-
     void Update()
     {
-        if (buttonMap && !mapPressed)
-        {
-            if (GameData.mapActive)
-            {
-                map.SetActive(false);
-                GameData.mapActive = false;
-            }
-            else
-            {
-                map.SetActive(true);
-                GameData.mapActive = true;
-            }
-            mapPressed = true;
-        }
-
-        if (!buttonMap)
-        {
-            mapPressed = false;
-        }
-
-        if (GameData.mapActive)
+        // if inventory menu open and on map tab, allow movement
+        if (inventoryMenu.activeSelf)
         {
             Vector3 pos1 = mapCamera.transform.position;
 
-            pos1.y += speed * movementInput.y * Time.deltaTime;
-            pos1.x += speed * movementInput.x * Time.deltaTime;
+            // use unscaled delta time to allow movement while paused
+            pos1.y += speed * movementInput.y * Time.unscaledDeltaTime;
+            pos1.x += speed * movementInput.x * Time.unscaledDeltaTime;
 
             mapCamera.transform.position = pos1;
         }
