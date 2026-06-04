@@ -12,14 +12,17 @@ public class PlayerController : MonoBehaviour
 	[SerializeField] private float thrust;
 
 	private Rigidbody2D rb;
-    private SpriteRenderer sprite;
     private GroundCheck groundCheck;
-	private Vector2 movementInput = Vector2.zero;
+
+    public Vector2 MovementInput { get; private set; }
 	private bool jumped;
 
+    /*
+        Player input actions
+    */
     public void OnMove(InputAction.CallbackContext context)
     {
-        movementInput = context.ReadValue<Vector2>();
+        MovementInput = context.ReadValue<Vector2>();
     }
 
     public void OnJump(InputAction.CallbackContext context)
@@ -31,7 +34,6 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         groundCheck = GetComponentInChildren<GroundCheck>();
-        sprite = GetComponentInChildren<SpriteRenderer>();
     }
 
     void FixedUpdate()
@@ -44,12 +46,6 @@ public class PlayerController : MonoBehaviour
         }
 
         // movement logic
-        rb.velocity = new Vector2(movementInput.x * speed, rb.velocity.y);
-
-        // flip the player sprite based on movement direction
-        if (movementInput.x > 0)
-            sprite.flipX = true;
-        else if (movementInput.x < 0)
-            sprite.flipX = false;
+        rb.velocity = new Vector2(MovementInput.x * speed, rb.velocity.y);
     }
 }

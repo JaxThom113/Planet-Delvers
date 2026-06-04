@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2595674465101692629}
   - component: {fileID: 1529478011448387334}
-  - component: {fileID: 6173212974304469640}
+  - component: {fileID: 3945107340752375951}
   - component: {fileID: 7188757934803143912}
   - component: {fileID: 24485886540110632}
   m_Layer: 0
@@ -64,8 +64,8 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!61 &6173212974304469640
-BoxCollider2D:
+--- !u!70 &3945107340752375951
+CapsuleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -96,19 +96,9 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.78}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 0.875, y: 1.565}
-  m_EdgeRadius: 0
+  m_Offset: {x: 0, y: 0.75}
+  m_Size: {x: 0.75, y: 1.5}
+  m_Direction: 0
 --- !u!114 &7188757934803143912
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -212,6 +202,18 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: b9fbec9a-9262-4f01-8eea-9343a2a92db4
     m_ActionName: Player Controls/Map Movement[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d,/Keyboard/upArrow,/Keyboard/downArrow,/Keyboard/leftArrow,/Keyboard/rightArrow]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 96339582-fd69-4cee-b8c2-048934ffe196
+    m_ActionName: Player Controls/Inventory[/Keyboard/i]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: b0a9fb1c-2fbd-4f6c-8aeb-7e353321eb91
+    m_ActionName: Player Controls/Stats[/Keyboard/k]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 118b44df-1191-44f9-aaf2-6a18c8af87fc
+    m_ActionName: Player Controls/Pause[/Keyboard/escape]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player Controls
@@ -227,6 +229,8 @@ GameObject:
   m_Component:
   - component: {fileID: 5451918595215621077}
   - component: {fileID: 30303791581397469}
+  - component: {fileID: 3344483545786648849}
+  - component: {fileID: 3784743315251775349}
   m_Layer: 0
   m_Name: Sprite
   m_TagString: Untagged
@@ -301,6 +305,42 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!95 &3344483545786648849
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5101827273865429474}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: d7a0a2475fa04e442bab79d70560bcb1, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &3784743315251775349
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5101827273865429474}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 104fe09aafa56974db88d9853979938c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rb: {fileID: 1529478011448387334}
+  groundCheck: {fileID: 7548647431681698607}
+  playerController: {fileID: 7188757934803143912}
 --- !u!1 &5727587911424098869
 GameObject:
   m_ObjectHideFlags: 0
