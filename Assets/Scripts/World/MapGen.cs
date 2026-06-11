@@ -56,18 +56,13 @@ Example Structure Grid:
 
 */
 
-public struct MapTile
-{
-    public int regionType;
-    public bool visited;
-    public bool[] doors; // {N, S, E, W}
-    public bool[] connections; // {N, S, E, W}
-}
-
 public static class MapGen
 {
     // dimensions of map grid, square
     public static int GridSize { get; private set; }
+
+    // coordinates of the room where the player starts
+    public static Vector2Int StartRoom { get; private set; }
 
     // used to divide map into different regions to set bounds for generation
     public static List<List<int>> RegionGrid { get; private set; }
@@ -78,83 +73,50 @@ public static class MapGen
     // main map grid
     public static List<List<MapTile>> MapGrid { get; private set; }
 
+    // all of the distinct rooms in MapGrid
+    public static List<List<MapTile>> MapRooms { get; private set; }
+
     public static void GenerateMap()
     {
         GridSize = 16;
 
         // Step #1: Establish regions and set start point
+        Debug.Log("Creating regions...");
         CreateRegions();
 
         // Step #2: Generate structures for each region within their bounds
+        Debug.Log("Creating structures...");
         CreateStructures();
 
-        // Step #3: Create MapGrid
-        CreateMap();
+        // Step #3: Connect tiles to make rooms and connect rooms with doors
+        Debug.Log("Connecting rooms and adding doors...");
+        CreateRooms();
 
-        // Step #4: Connect cells to create rooms
-        AddConnections();
-
-        // Step #5: Add doors to connect rooms
-        AddDoors();
-
-        // Step #6: Save map data to cache
-        CacheMapData();
+        // Step #4: Save map data to cache
+        //CacheMapData();
     }
 
     private static void CreateRegions()
     {
-        // use flood fill to create 4 regions
-        RegionGrid = FloodFill.FloodFillRegions();
+        RegionGrid = RegionGen.CreateRegions();
+        StartRoom = RegionGen.GetStartPoint();
     }
 
     private static void CreateStructures()
     {
-        List<Vector2Int> regionTiles;
-
-        // use a randomly picked algorithm to generate unique structures in each region
-        for (int region = 1; region <= 4; region++)
-        {
-            regionTiles = MapGenUtility.GetTilesOfRegion(RegionGrid, region);
-
-            if (Random.Range(0, 2) == 0)
-                StructureGrid = Dfs.DfsGenerate(RegionGrid, regionTiles, region);
-            else
-                StructureGrid = RandomWalk.RandomWalkGenerate(RegionGrid, regionTiles, region);
-        }
+        StructureGrid = StructureGen.CreateStructures();
     }
 
-    private static void CreateMap()
+    private static void CreateRooms()
     {
-        // set up empty map grid
-        MapGrid = new List<List<MapTile>>();
-        for (int y = 0; y < GridSize; y++)
-        {
-            MapGrid.Add(new List<MapTile>());
-            for (int x = 0; x < GridSize; x++)
-            {
-                MapGrid[y].Add(new MapTile
-                {
-                    regionType = 0,
-                    visited = false,
-                    doors = new bool[4] { false, false, false, false },
-                    connections = new bool[4] { false, false, false, false }
-                });
-            }
-        }
-    }
-
-    private static void AddConnections()
-    {
-        return;
-    }
-
-    private static void AddDoors()
-    {
-        return;
+        MapGrid = RoomGen.CreateRooms();
+        MapRooms = RoomGen.GetRooms();
     }
 
     private static void CacheMapData()
     {
         CsvUtility.SaveGridToCSV(RegionGrid, "region_grid.csv");
+        CsvUtility.SaveGridToCSV(StructureGrid, "structure_grid.csv");
+        JsonUtility.SaveGridToJson(MapGrid, "map_grid.json");
     }
 }

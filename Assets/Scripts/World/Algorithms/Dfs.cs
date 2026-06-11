@@ -4,8 +4,6 @@ using UnityEngine;
 
 public static class Dfs
 {
-    private static readonly int GRID_SIZE = MapGen.GridSize;
-
     private static readonly Vector2Int[] directions =
     {
         new Vector2Int(0, -2), // up
@@ -14,9 +12,10 @@ public static class Dfs
         new Vector2Int(2, 0),  // right
     };
 
-    public static List<List<int>> DfsGenerate(List<List<int>> grid, List<Vector2Int> regionTiles, int region, int y = 0, int x = 0)
+    public static List<List<int>> DfsGenerate(List<List<int>> grid, int region, Vector2Int seed)
     {
-        Vector2Int current = new Vector2Int(x, y);
+        HashSet<Vector2Int> regionTiles = MapGenUtility.GetTiles(MapGen.RegionGrid, region);
+        Vector2Int current = seed;
 
         // randomize directions
         List<Vector2Int> dirs = new List<Vector2Int>(directions);
@@ -32,10 +31,10 @@ public static class Dfs
                 if (grid[next.y][next.x] == 0) // unvisited
                 {
                     // carve path between current and neighbor
-                    grid[y + dir.y / 2][x + dir.x / 2] = region;
+                    grid[seed.y + dir.y / 2][seed.x + dir.x / 2] = region;
                     grid[next.y][next.x] = region;
 
-                    DfsGenerate(grid, regionTiles, next.y, next.x);
+                    DfsGenerate(grid, region, next);
                 }
             }
         }
