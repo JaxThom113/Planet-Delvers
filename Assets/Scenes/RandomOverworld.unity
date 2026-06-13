@@ -395,11 +395,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2595674465101692629, guid: e082d88bed6868f46bf177a1f75e40c7, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 9
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2595674465101692629, guid: e082d88bed6868f46bf177a1f75e40c7, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 4.21875
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2595674465101692629, guid: e082d88bed6868f46bf177a1f75e40c7, type: 3}
       propertyPath: m_LocalPosition.z
@@ -787,7 +787,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a124c6e45c25671409e2fa9115ed3e9e, type: 2}
   - {fileID: 11400000, guid: 343154a9eb9fa2f47b5d5891addcd6a2, type: 2}
   - {fileID: 11400000, guid: b4709c4a89373b04ea483f3716dbe4b3, type: 2}
-  roomGrid: {fileID: 121905245}
   roomTiles:
   - {fileID: 11400000, guid: f1d42ec1a270bae4cb4d528db1f7d015, type: 2}
   - {fileID: 11400000, guid: 4f80f261dafc94b4b974fdc6355eb724, type: 2}

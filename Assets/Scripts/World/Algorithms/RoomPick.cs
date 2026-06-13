@@ -28,6 +28,12 @@ public static class RoomPick
     {
         allRooms = new List<List<MapTile>>();
 
+        // before making all the other rooms, establish the starting room
+        MapTile startTile = grid[MapGen.StartRoom.y][MapGen.StartRoom.x];
+        startTile.SetPosition(MapGen.StartRoom);
+        startTile.SetRegion(5);
+        grid[MapGen.StartRoom.y][MapGen.StartRoom.x] = startTile;
+
         for (int region = 1; region <= 4; region++)
         {
             HashSet<Vector2Int> targetStructureTiles = MapGenUtility.GetTiles(MapGen.StructureGrid, region);
@@ -49,9 +55,9 @@ public static class RoomPick
                     HashSet<Vector2Int> currentRoomTiles = new HashSet<Vector2Int>();
 
                     // for the currently selected room size, check if all tiles are part of the structure tilemap
-                    for (int dx = 0; dx < room.x; dx++)
+                    for (int dy = 0; dy < room.y; dy++)
                     {
-                        for (int dy = 0; dy < room.y; dy++)
+                        for (int dx = 0; dx < room.x; dx++)
                         {
                             Vector2Int loc = new Vector2Int(current.x + dx, current.y + dy);
 
@@ -64,7 +70,7 @@ public static class RoomPick
                             }
                             else
                             {
-                                currentRoomTiles.Add(new Vector2Int(loc.x, loc.y));
+                                currentRoomTiles.Add(loc);
                             }
                         }
 
@@ -75,18 +81,14 @@ public static class RoomPick
                     if (!roomFits)
                         continue;
 
-                    // length is the size of the room about to be added
                     List<MapTile> roomToAdd = new List<MapTile>();
 
                     // if the room fits within structure and region maps, add it
-                    for (int dx = 0; dx < room.x; dx++)
+                    for (int dy = 0; dy < room.y; dy++)
                     {
-                        for (int dy = 0; dy < room.y; dy++)
+                        for (int dx = 0; dx < room.x; dx++)
                         {
                             Vector2Int loc = new Vector2Int(current.x + dx, current.y + dy);
-
-                            // grid[loc.y][loc.x].SetPosition(loc);
-                            // grid[loc.y][loc.x].SetRegion(region);
 
                             // go through each direction (up->down->left->right) and mark true if another tile of the room is there
                             bool[] connections = new bool[4] { false, false, false, false };
@@ -96,8 +98,6 @@ public static class RoomPick
                                 if (currentRoomTiles.Contains(neighbor))
                                     connections[i] = true;
                             }
-
-                            // grid[loc.y][loc.x].SetConnections(connections);
 
                             // update this tile
                             MapTile thisTile = grid[loc.y][loc.x]; // grab copy

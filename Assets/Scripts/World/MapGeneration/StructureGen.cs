@@ -31,7 +31,6 @@ public static class StructureGen
 
             // go through random order in list of algorithms until one works
             bool success = false;
-            int structureAttempt = 0;
             while (!success)
             {
                 int randomAlgorithm = UnityEngine.Random.Range(0, 2);
@@ -55,18 +54,9 @@ public static class StructureGen
                 }
                 else
                 {
-                    structureAttempt++;
-                    if (structureAttempt > 50)
-                    {
-                        Debug.LogWarning("Region " + region + " structure generation failed after 50 attempts - using current structure anyway");
-                        success = true;
-                    }
-                    else
-                    {
-                        Debug.Log("Failed StructureGen Attempt #" + attempt + " - Region " + region + " structure not touching required adjacent Regions");
-                        attempt++;
-                        ClearStructureTiles(region);
-                    }
+                    Debug.Log("Failed StructureGen Attempt #" + attempt + " - Region " + region + " structure not touching required adjacent Regions");
+                    attempt++;
+                    ClearStructureTiles(region);
                 }
             
             }
@@ -75,14 +65,8 @@ public static class StructureGen
         // similar to regions, if structures aren't adjacent in the correct way, try again
         if (!MapGenUtility.EnsureProgression(structureGrid))
         {
-            attempt++;
-            if (attempt > 100)
-            {
-                Debug.LogError("Structure generation failed after 100 attempts - giving up");
-                return structureGrid;
-            }
-            
             Debug.Log("Failed StructureGen Attempt #" + attempt + " - Structures do not touch properly");
+            attempt++;
             return CreateStructures();
         }
 

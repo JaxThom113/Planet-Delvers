@@ -28,13 +28,6 @@ public static class RegionGen
         // if regions aren't adjacent in the correct way, recurse and try again
         if (!MapGenUtility.EnsureProgression(regionGrid))
         {
-            attempt++;
-            if (attempt > 100)
-            {
-                Debug.LogError("Region generation failed after 100 attempts - giving up");
-                return regionGrid;
-            }
-            
             Debug.Log("Failed Attempt #" + attempt + " - Regions do not touch");
             return CreateRegions();
         }

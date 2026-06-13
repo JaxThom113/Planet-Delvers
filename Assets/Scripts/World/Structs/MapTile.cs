@@ -7,7 +7,6 @@ public struct MapTile
     public Vector2Int position;
     public int region;
     public bool visited;
-    public bool startRoom;
     public bool[] doors; // { up, down, left, right }
     public bool[] connections; // { up, down, left, right }
 

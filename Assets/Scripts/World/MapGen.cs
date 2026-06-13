@@ -81,15 +81,12 @@ public static class MapGen
         GridSize = 16;
 
         // Step #1: Establish regions and set start point
-        Debug.Log("Creating regions...");
         CreateRegions();
 
         // Step #2: Generate structures for each region within their bounds
-        Debug.Log("Creating structures...");
         CreateStructures();
 
         // Step #3: Connect tiles to make rooms and connect rooms with doors
-        Debug.Log("Connecting rooms and adding doors...");
         CreateRooms();
 
         // Step #4: Save map data to cache

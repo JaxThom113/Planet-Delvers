@@ -54,10 +54,9 @@ public static class MapGenUtility
             {
                 grid[y].Add(new MapTile
                 {
-                    position = new Vector2Int(y, x),
+                    position = new Vector2Int(x, y),
                     region = 0,
                     visited = false,
-                    startRoom = false,
                     doors = new bool[4] { false, false, false, false },
                     connections = new bool[4] { false, false, false, false }
                 });
@@ -72,9 +71,9 @@ public static class MapGenUtility
         // add all tiles of a region or a structure in a return to a list and return
         HashSet<Vector2Int> tiles = new HashSet<Vector2Int>();
 
-        for (int x = 0; x < GridSize; x++)
+        for (int y = 0; y < GridSize; y++)
         {
-            for (int y = 0; y < GridSize; y++)
+            for (int x = 0; x < GridSize; x++)
             {
                 if (grid[y][x] == region)
                     tiles.Add(new Vector2Int(x, y));
