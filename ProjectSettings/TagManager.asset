@@ -39,6 +39,9 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Containers
+    uniqueID: 740148371
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0

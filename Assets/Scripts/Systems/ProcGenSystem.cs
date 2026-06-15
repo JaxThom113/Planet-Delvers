@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -26,8 +27,10 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
     [SerializeField] private Tile[] doorTiles;
 
     [Header("Room Generation")]
-    [SerializeField] private Tile[] roomTiles;
     [SerializeField] private Grid worldGrid;
+    [SerializeField] private Tile[] fgTiles;
+    [SerializeField] private Tile[] bgTiles;
+    [SerializeField] private Tile[] entityTiles;
 
     void Start()
     {   
@@ -160,22 +163,51 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
                     int py = y * 18;
                     int px = x * 32;
 
-                    // create new tilemap at these coordinates, position it
+                    // create new room at these coordinates, position it
                     GameObject roomObject = new GameObject($"StartRoom_{x}_{y}");
                     roomObject.transform.SetParent(worldGrid.transform);
                     roomObject.transform.localPosition = new Vector3(px, FlipPY(py), 0);
 
-                    // add components
-                    Tilemap tilemap = roomObject.AddComponent<Tilemap>();
-                    TilemapRenderer renderer = roomObject.AddComponent<TilemapRenderer>();  
-                    TilemapCollider2D collider = roomObject.AddComponent<TilemapCollider2D>();
+                    // add foreground tilemap layer
+                    GameObject fg = new GameObject($"Fg");
+                    fg.transform.SetParent(roomObject.transform, false);
+                    Tilemap fgTilemap = fg.AddComponent<Tilemap>();
+                    TilemapRenderer fgRenderer = fg.AddComponent<TilemapRenderer>();  
+                    TilemapCollider2D fgCollider = fg.AddComponent<TilemapCollider2D>();
+                    fgRenderer.sortingOrder = 1;
 
-                    // get the start room layout and position the player there
-                    List<List<int>> grid = CsvUtility.LoadGridFromCSV("Data/Rooms/start.csv");
+                    // add background tilemap layer
+                    GameObject bg = new GameObject($"Bg");
+                    bg.transform.SetParent(roomObject.transform, false);
+                    Tilemap bgTilemap = bg.AddComponent<Tilemap>();
+                    TilemapRenderer bgRenderer = bg.AddComponent<TilemapRenderer>();  
+                    bgTilemap.color = new Color(1, 1, 1, 32f/255f); // lower opacity
+                    bgRenderer.sortingOrder = 0;
+
+                    // add entity tilemap layer
+                    GameObject entity = new GameObject($"Entity");
+                    entity.transform.SetParent(roomObject.transform, false);
+                    Tilemap entityTilemap = entity.AddComponent<Tilemap>();
+                    TilemapRenderer entityRenderer = entity.AddComponent<TilemapRenderer>();  
+                    entityRenderer.enabled = false; // disable renderer to make entity editor tiles invisible
+                    entityRenderer.sortingOrder = 2;
+
+                    // load csv layout data
+                    string path = $"Data/Rooms/Special/Start/";
+                    List<List<int>> fgGrid = CsvUtility.LoadGridFromCSV(path + $"Fg/1.csv");  
+                    List<List<int>> bgGrid = CsvUtility.LoadGridFromCSV(path + $"Bg/1.csv");  
+                    List<List<int>> entityGrid = CsvUtility.LoadGridFromCSV(path + $"Entity/1.csv");  
+                    
+                    // draw the tiles to this room
+                    if (fgGrid != null)
+                        DrawToTilemap(1, fgTilemap, fgGrid, 5);
+                    if (bgGrid != null)
+                        DrawToTilemap(2, bgTilemap, bgGrid, 5);
+                    if (entityGrid != null)
+                        DrawToTilemap(3, entityTilemap, entityGrid, 5);
+
+                    // move the player to the starting room
                     player.transform.localPosition = new Vector3(px + 6, FlipPY(py) + 4, 0);
-
-                    // draw the tiles for the start room
-                    DrawToTilemap(tilemap, grid);
                 }
             }
         }
@@ -192,46 +224,68 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
             int max_x = room[room.Count-1].position.x;
             int max_y = room[room.Count-1].position.y;
             
-            // figure out the dimensions of the room and pick which layout number (for file search)
+            // figure out the dimensions of the room
             Vector2Int dims = new Vector2Int(max_x - min_x + 1, max_y - min_y + 1);
-            int layoutNum = 1;
+
+            // pick a random room layout of the current size
+            string path = $"Data/Rooms/{dims.x}/{dims.y}/";
+            int numFolders = Directory.GetDirectories(Path.Combine(Application.dataPath, path)).Length;
+            int layoutNum = UnityEngine.Random.Range(1, numFolders + 1); 
 
             int index = 1;
             for (int y = min_y; y <= max_y; y++)
             {
                 for (int x = min_x; x <= max_x; x++)
                 {
-                    if (MapGen.MapGrid[y][x].region == 0)
+                    int region = MapGen.MapGrid[y][x].region;
+
+                    if (region == 0)
                         continue;
 
                     int py = y * 18;
                     int px = x * 32;
 
-                    // create new tilemap at these coordinates, position it
+                    // create new room at these coordinates, position it
                     GameObject roomObject = new GameObject($"Room_{x}_{y}");
                     roomObject.transform.SetParent(worldGrid.transform);
                     roomObject.transform.localPosition = new Vector3(px, FlipPY(py), 0);
 
-                    // add components
-                    Tilemap tilemap = roomObject.AddComponent<Tilemap>();
-                    TilemapRenderer renderer = roomObject.AddComponent<TilemapRenderer>();  
-                    TilemapCollider2D collider = roomObject.AddComponent<TilemapCollider2D>();
+                    // add foreground tilemap layer
+                    GameObject fg = new GameObject($"Fg");
+                    fg.transform.SetParent(roomObject.transform, false);
+                    Tilemap fgTilemap = fg.AddComponent<Tilemap>();
+                    TilemapRenderer fgRenderer = fg.AddComponent<TilemapRenderer>();  
+                    TilemapCollider2D fgCollider = fg.AddComponent<TilemapCollider2D>();
+                    fgRenderer.sortingOrder = 1;
 
-                    switch (MapGen.MapGrid[y][x].region)
-                    {
-                        case 1: tilemap.color = new Color(0, 148f/255f, 1); break; // blue
-                        case 2: tilemap.color = new Color(1, 0, 0); break;         // red
-                        case 3: tilemap.color = new Color(1, 106f/255f, 0); break; // orange
-                        case 4: tilemap.color = new Color(76f/255f, 1, 0); break;  // green
-                        default: tilemap.color = new Color(1, 1, 1); break;        // white
-                    }
+                    // add background tilemap layer
+                    GameObject bg = new GameObject($"Bg");
+                    bg.transform.SetParent(roomObject.transform, false);
+                    Tilemap bgTilemap = bg.AddComponent<Tilemap>();
+                    TilemapRenderer bgRenderer = bg.AddComponent<TilemapRenderer>();  
+                    bgTilemap.color = new Color(1, 1, 1, 32f/255f); // lower opacity
+                    bgRenderer.sortingOrder = 0;
 
-                    List<List<int>> grid = CsvUtility.LoadGridFromCSV(
-                        $"Data/Rooms/{dims.x}/{dims.y}/{dims.x}x{dims.y}_{layoutNum}/{index}.csv"
-                    );  
+                    // add entity tilemap layer
+                    GameObject entity = new GameObject($"Entity");
+                    entity.transform.SetParent(roomObject.transform, false);
+                    Tilemap entityTilemap = entity.AddComponent<Tilemap>();
+                    TilemapRenderer entityRenderer = entity.AddComponent<TilemapRenderer>();  
+                    entityRenderer.enabled = false; // disable renderer to make entity editor tiles invisible
+                    entityRenderer.sortingOrder = 2;
+
+                    // load csv layout data
+                    List<List<int>> fgGrid = CsvUtility.LoadGridFromCSV(path + $"{dims.x}x{dims.y}_{layoutNum}/Fg/{index}.csv");  
+                    List<List<int>> bgGrid = CsvUtility.LoadGridFromCSV(path + $"{dims.x}x{dims.y}_{layoutNum}/Bg/{index}.csv");  
+                    List<List<int>> entityGrid = CsvUtility.LoadGridFromCSV(path + $"{dims.x}x{dims.y}_{layoutNum}/Entity/{index}.csv");  
                     
                     // draw the tiles to this room
-                    DrawToTilemap(tilemap, grid);
+                    if (fgGrid != null)
+                        DrawToTilemap(1, fgTilemap, fgGrid, region);
+                    if (bgGrid != null)
+                        DrawToTilemap(2, bgTilemap, bgGrid, region);
+                    if (entityGrid != null)
+                        DrawToTilemap(3, entityTilemap, entityGrid, region);
                     
                     index++;
                 }
@@ -246,41 +300,60 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
                 if (worldGrid.transform.Find($"Room_{x}_{y}") == null)
                     continue;
                 
-                Tilemap tilemap = worldGrid.transform.Find($"Room_{x}_{y}").GetComponent<Tilemap>();
+                Transform thisRoom = worldGrid.transform.Find($"Room_{x}_{y}");
+                Tilemap fgTilemap = thisRoom.Find("Fg").GetComponent<Tilemap>();
+                int region = MapGen.MapGrid[y][x].region;
 
                 if (MapGen.MapGrid[y][x].doors[0])
                 {
                     // layer door tiles on existing room tiles to add doors between rooms
                     List<List<int>> grid = CsvUtility.LoadGridFromCSV("Data/World/up_door.csv");
-                    DrawToTilemap(tilemap, grid);
+                    DrawToTilemap(1, fgTilemap, grid, region);
                 }
 
                 if (MapGen.MapGrid[y][x].doors[1])
                 {
                     // layer door tiles on existing room tiles to add doors between rooms
                     List<List<int>> grid = CsvUtility.LoadGridFromCSV("Data/World/down_door.csv");  
-                    DrawToTilemap(tilemap, grid);
+                    DrawToTilemap(1, fgTilemap, grid, region);
                 }
 
                 if (MapGen.MapGrid[y][x].doors[2])
                 {
                     // layer door tiles on existing room tiles to add doors between rooms
                     List<List<int>> grid = CsvUtility.LoadGridFromCSV("Data/World/left_door.csv");  
-                    DrawToTilemap(tilemap, grid);
+                    DrawToTilemap(1, fgTilemap, grid, region);
                 }
 
                 if (MapGen.MapGrid[y][x].doors[3])
                 {
                     // layer door tiles on existing room tiles to add doors between rooms
                     List<List<int>> grid = CsvUtility.LoadGridFromCSV("Data/World/right_door.csv");  
-                    DrawToTilemap(tilemap, grid);
+                    DrawToTilemap(1, fgTilemap, grid, region);
                 }
             }
         }
     }
 
-    private void DrawToTilemap(Tilemap tilemap, List<List<int>> grid)
+    private void DrawToTilemap(int layer, Tilemap tilemap, List<List<int>> grid, int region)
     {
+        Tile[] currentTiles = fgTiles;
+        switch (layer)
+        {
+            case 1: currentTiles = fgTiles; break;
+            case 2: currentTiles = bgTiles; break;
+            case 3: currentTiles = entityTiles; break;
+        }
+
+        Color[] currentColors = new Color[5]{Color.white, Color.white, Color.white, Color.white, Color.white};
+        switch (region)
+        {
+            case 1: currentColors = r1Colors; break; // blue
+            case 2: currentColors = r2Colors; break; // red
+            case 3: currentColors = r3Colors; break; // orange
+            case 4: currentColors = r4Colors; break; // green
+        }
+        
         for (int gy = 0; gy < 18; gy++)
         {
             for (int gx = 0; gx < 32; gx++)
@@ -290,12 +363,17 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
                 switch (tile)
                 {
                     case 0: break;
-                    case 1: tilemap.SetTile(new Vector3Int(gx, gy, 0), roomTiles[0]); break;
-                    case 2: tilemap.SetTile(new Vector3Int(gx, gy, 0), roomTiles[1]); break;
-                    case 3: tilemap.SetTile(new Vector3Int(gx, gy, 0), roomTiles[2]); break;
-                    case 4: tilemap.SetTile(new Vector3Int(gx, gy, 0), roomTiles[3]); break;
+                    case 1: tilemap.SetTile(new Vector3Int(gx, gy, 0), currentTiles[0]); break;
+                    case 2: tilemap.SetTile(new Vector3Int(gx, gy, 0), currentTiles[1]); break;
+                    case 3: tilemap.SetTile(new Vector3Int(gx, gy, 0), currentTiles[2]); break;
+                    case 4: tilemap.SetTile(new Vector3Int(gx, gy, 0), currentTiles[3]); break;
                     case 5: tilemap.SetTile(new Vector3Int(gx, gy, 0), null); break;
                 }
+
+                // pick a random color for this tile of its region
+                Color randColor = currentColors[UnityEngine.Random.Range(0, currentColors.Length)];
+                tilemap.SetTileFlags(new Vector3Int(gx, gy, 0), TileFlags.None);
+                tilemap.SetColor(new Vector3Int(gx, gy, 0), randColor);
             }
         }
     }
@@ -309,4 +387,40 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
     {
         return ((MapGen.GridSize * 18) - 18) - py;
     }
+
+    private readonly Color[] r1Colors = 
+    {
+        new Color(88f/255f, 184f/255f, 1), // +2 lighter
+        new Color(42f/255f, 165f/255f, 1), // +1 lighter
+        new Color(0, 148f/255f, 1), //  0 base color (blue)
+        new Color(0, 123f/255f, 212f/255f), // -1 darker
+        new Color(0, 100f/255f, 171f/255f), // -2 darker
+    };
+
+    private readonly Color[] r2Colors = 
+    {
+        new Color(1, 80f/255f, 80f/255f), // +2 lighter
+        new Color(1, 40f/255f, 40f/255f), // +1 lighter
+        new Color(1, 0, 0), //  0 base color (red)
+        new Color(207f/255f, 0, 0), // -1 darker
+        new Color(162f/255f, 0, 0), // -2 darker
+    };
+
+    private readonly Color[] r3Colors = 
+    {
+        new Color(1, 152f/255f, 79f/255f), // +2 lighter
+        new Color(1, 130f/255f, 42f/255f), // +1 lighter
+        new Color(1, 106f/255f, 0), //  0 base color (orange)
+        new Color(214f/255f, 89f/255f, 0), // -1 darker
+        new Color(164f/255f, 69f/255f, 0), // -2 darker
+    };
+
+    private readonly Color[] r4Colors = 
+    {
+        new Color(136f/255f, 1, 86f/255f), // +2 lighter
+        new Color(107f/255f, 1, 45f/255f), // +1 lighter
+        new Color(76f/255f, 1, 0), //  0 base color (green)
+        new Color(63f/255f, 210f/255f, 0), // -1 darker
+        new Color(49f/255f, 166f/255f, 0), // -2 darker
+    };
 }

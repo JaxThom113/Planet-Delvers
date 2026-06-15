@@ -112,8 +112,8 @@ public static class MapGen
 
     private static void CacheMapData()
     {
-        CsvUtility.SaveGridToCSV(RegionGrid, "region_grid.csv");
-        CsvUtility.SaveGridToCSV(StructureGrid, "structure_grid.csv");
+        CsvUtility.SaveGridToCache(RegionGrid, "region_grid.csv");
+        CsvUtility.SaveGridToCache(StructureGrid, "structure_grid.csv");
         JsonUtility.SaveGridToJson(MapGrid, "map_grid.json");
     }
 }

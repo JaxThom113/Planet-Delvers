@@ -787,12 +787,22 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a124c6e45c25671409e2fa9115ed3e9e, type: 2}
   - {fileID: 11400000, guid: 343154a9eb9fa2f47b5d5891addcd6a2, type: 2}
   - {fileID: 11400000, guid: b4709c4a89373b04ea483f3716dbe4b3, type: 2}
-  roomTiles:
-  - {fileID: 11400000, guid: f1d42ec1a270bae4cb4d528db1f7d015, type: 2}
+  worldGrid: {fileID: 1351567846}
+  fgTiles:
   - {fileID: 11400000, guid: 4f80f261dafc94b4b974fdc6355eb724, type: 2}
+  - {fileID: 11400000, guid: f1d42ec1a270bae4cb4d528db1f7d015, type: 2}
   - {fileID: 11400000, guid: e2baed0097db57845a293203e6a1a8d8, type: 2}
   - {fileID: 11400000, guid: 4e9063ab1e47b3c48a5eaeeeb41d8b83, type: 2}
-  worldGrid: {fileID: 1351567846}
+  bgTiles:
+  - {fileID: 11400000, guid: b8e7d3070d64c4e47857ce7e35fb53d3, type: 2}
+  - {fileID: 11400000, guid: 4ca7c2ed4e5d3614397fa7037e9fe21e, type: 2}
+  - {fileID: 11400000, guid: 2866d35d3e88d2c4d803668cae9b53b2, type: 2}
+  - {fileID: 11400000, guid: 4c112e9f5b6f40442897384bde361165, type: 2}
+  entityTiles:
+  - {fileID: 11400000, guid: 3e756a5f351b0ca4cbf92f9a094a39da, type: 2}
+  - {fileID: 11400000, guid: c570659f4f65e714dbdd2d5ddbf0773d, type: 2}
+  - {fileID: 11400000, guid: 805c0fdc5385abb4ba96a75b862b156b, type: 2}
+  - {fileID: 11400000, guid: 0ad4c08c10269b441aaa5546a17c0b5a, type: 2}
 --- !u!1 &334136613 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3713577577503074171, guid: e082d88bed6868f46bf177a1f75e40c7, type: 3}
@@ -1039,7 +1049,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.3018868, g: 0.3018868, b: 0.3018868, a: 0}
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0

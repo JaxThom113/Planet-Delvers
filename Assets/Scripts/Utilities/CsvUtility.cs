@@ -6,7 +6,28 @@ using UnityEngine;
 
 public static class CsvUtility
 {
-    public static void SaveGridToCSV(List<List<int>> grid, string fileName)
+    public static void SaveGridToCSV(List<List<int>> grid, string parentPath, string directoryName, string layerName, string fileName)
+    {
+        List<string> lines = new List<string>();
+        foreach (List<int> row in grid)
+        {
+            lines.Add(string.Join(",", row));
+        }
+
+        // create parent directory (i.e. 3x4_4)
+        string directory = Path.Combine(Application.dataPath, parentPath, directoryName);
+        Directory.CreateDirectory(directory);
+
+        // create desired layer directory (foreground, background, entity)
+        string layerDirectory = Path.Combine(directory, layerName);
+        Directory.CreateDirectory(layerDirectory);
+
+        // create csv data for that layer (1.csv -> x.csv, where x is the number of connected rooms)
+        string path = Path.Combine(layerDirectory, fileName);
+        File.WriteAllLines(path, lines);
+    }
+
+    public static void SaveGridToCache(List<List<int>> grid, string fileName)
     {
         List<string> lines = new List<string>();
         foreach (List<int> row in grid)
@@ -28,6 +49,13 @@ public static class CsvUtility
         List<List<int>> grid = new List<List<int>>();
 
         string path = Path.Combine(Application.dataPath, fileName);
+
+        if (!File.Exists(path))
+        {
+            Debug.LogWarning($"File not found: {path}");
+            return null;
+        }
+
         string[] lines = File.ReadAllLines(path);
 
         foreach (string line in lines)
