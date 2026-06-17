@@ -230,7 +230,7 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
             // pick a random room layout of the current size
             string path = $"Data/Rooms/{dims.x}/{dims.y}/";
             int numFolders = Directory.GetDirectories(Path.Combine(Application.dataPath, path)).Length;
-            int layoutNum = UnityEngine.Random.Range(1, numFolders + 1); 
+            int layoutNum = UnityEngine.Random.Range(1, numFolders); // ignore the Base layout
 
             int index = 1;
             for (int y = min_y; y <= max_y; y++)
@@ -278,8 +278,16 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
                     List<List<int>> fgGrid = CsvUtility.LoadGridFromCSV(path + $"{dims.x}x{dims.y}_{layoutNum}/Fg/{index}.csv");  
                     List<List<int>> bgGrid = CsvUtility.LoadGridFromCSV(path + $"{dims.x}x{dims.y}_{layoutNum}/Bg/{index}.csv");  
                     List<List<int>> entityGrid = CsvUtility.LoadGridFromCSV(path + $"{dims.x}x{dims.y}_{layoutNum}/Entity/{index}.csv");  
+
+                    // fallback to Base if no custom layouts exist
+                    if (fgGrid == null && bgGrid == null && entityGrid == null)
+                    {
+                        fgGrid = CsvUtility.LoadGridFromCSV(path + $"{dims.x}x{dims.y}_Base/Fg/{index}.csv");  
+                        bgGrid = CsvUtility.LoadGridFromCSV(path + $"{dims.x}x{dims.y}_Base/Bg/{index}.csv");  
+                        entityGrid = CsvUtility.LoadGridFromCSV(path + $"{dims.x}x{dims.y}_Base/Entity/{index}.csv"); 
+                    }
                     
-                    // draw the tiles to this room
+                    // draw the tiles to this room for each included layer (some layouts like Base are missing some layers)
                     if (fgGrid != null)
                         DrawToTilemap(1, fgTilemap, fgGrid, region);
                     if (bgGrid != null)
