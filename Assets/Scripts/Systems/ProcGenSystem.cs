@@ -32,6 +32,9 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
     [SerializeField] private Tile[] bgTiles;
     [SerializeField] private Tile[] entityTiles;
 
+    [Header("Entity Generation")]
+    [SerializeField] private GameObject[] enemies;
+
     void Start()
     {   
         // make sure to save the random seed number for the player's reference
@@ -175,6 +178,7 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
                     TilemapRenderer fgRenderer = fg.AddComponent<TilemapRenderer>();  
                     TilemapCollider2D fgCollider = fg.AddComponent<TilemapCollider2D>();
                     fgRenderer.sortingOrder = 1;
+                    fg.layer = LayerMask.NameToLayer("Ground"); // make sure to set the layer so the player properly interacts with ground
 
                     // add background tilemap layer
                     GameObject bg = new GameObject($"Bg");
@@ -257,6 +261,7 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
                     TilemapRenderer fgRenderer = fg.AddComponent<TilemapRenderer>();  
                     TilemapCollider2D fgCollider = fg.AddComponent<TilemapCollider2D>();
                     fgRenderer.sortingOrder = 1;
+                    fg.layer = LayerMask.NameToLayer("Ground"); // make sure to set the layer so the player properly interacts with ground
 
                     // add background tilemap layer
                     GameObject bg = new GameObject($"Bg");
@@ -294,6 +299,32 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
                         DrawToTilemap(2, bgTilemap, bgGrid, region);
                     if (entityGrid != null)
                         DrawToTilemap(3, entityTilemap, entityGrid, region);
+
+                    // create a container to hold the entities for this room
+                    GameObject entityContainer = new GameObject($"EntityContainer");
+                    entityContainer.transform.SetParent(roomObject.transform, false);
+
+                    // spawn entities for the entity grid
+                    if (entityGrid != null)
+                    {
+                        for (int ey = 0; ey < 18; ey++)
+                        {
+                            for (int ex = 0; ex < 32; ex++)
+                            {
+                                int tile = entityGrid[17 - ey][ex];
+
+                                // get the world position of an entity tile
+                                Vector3 tilePos = entityTilemap.GetCellCenterWorld(new Vector3Int(ex, ey, 0));
+                                switch (tile)
+                                {
+                                    case 1: Instantiate(enemies[0], tilePos, Quaternion.identity, entityContainer.transform); break; // jumper
+                                    case 2: Instantiate(enemies[1], tilePos, Quaternion.identity, entityContainer.transform); break; // dropper
+                                    case 3: Instantiate(enemies[2], tilePos, Quaternion.identity, entityContainer.transform); break; // scuttler
+                                    case 4: Instantiate(enemies[3], tilePos, Quaternion.identity, entityContainer.transform); break; // drifter
+                                }
+                            }
+                        }
+                    }
                     
                     index++;
                 }
@@ -379,9 +410,12 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
                 }
 
                 // pick a random color for this tile of its region
-                Color randColor = currentColors[UnityEngine.Random.Range(0, currentColors.Length)];
-                tilemap.SetTileFlags(new Vector3Int(gx, gy, 0), TileFlags.None);
-                tilemap.SetColor(new Vector3Int(gx, gy, 0), randColor);
+                if (layer != 3)
+                {
+                    Color randColor = currentColors[UnityEngine.Random.Range(0, currentColors.Length)];
+                    tilemap.SetTileFlags(new Vector3Int(gx, gy, 0), TileFlags.None);
+                    tilemap.SetColor(new Vector3Int(gx, gy, 0), randColor);
+                }
             }
         }
     }

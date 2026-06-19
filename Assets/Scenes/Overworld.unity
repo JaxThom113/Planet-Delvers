@@ -134,9 +134,9 @@ GameObject:
   - component: {fileID: 28585346}
   - component: {fileID: 28585345}
   - component: {fileID: 28585344}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Tilemap (10)
-  m_TagString: Ground
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2708,9 +2708,9 @@ GameObject:
   - component: {fileID: 90794930}
   - component: {fileID: 90794929}
   - component: {fileID: 90794928}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Tilemap (5)
-  m_TagString: Ground
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5814,7 +5814,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 24485886540110632, guid: e082d88bed6868f46bf177a1f75e40c7, type: 3}
       propertyPath: m_ActionEvents.Array.size
-      value: 7
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 24485886540110632, guid: e082d88bed6868f46bf177a1f75e40c7, type: 3}
       propertyPath: m_ActionEvents.Array.data[4].m_ActionId
@@ -5865,6 +5865,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 24485886540110632, guid: e082d88bed6868f46bf177a1f75e40c7, type: 3}
+      propertyPath: m_ActionEvents.Array.data[7].m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 24485886540110632, guid: e082d88bed6868f46bf177a1f75e40c7, type: 3}
       propertyPath: m_ActionEvents.Array.data[2].m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 6819395333275577236}
@@ -5884,6 +5888,10 @@ PrefabInstance:
       propertyPath: m_ActionEvents.Array.data[6].m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 6819395333275577236}
+    - target: {fileID: 24485886540110632, guid: e082d88bed6868f46bf177a1f75e40c7, type: 3}
+      propertyPath: m_ActionEvents.Array.data[7].m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 334136615}
     - target: {fileID: 24485886540110632, guid: e082d88bed6868f46bf177a1f75e40c7, type: 3}
       propertyPath: m_ActionEvents.Array.data[4].m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
@@ -5913,6 +5921,10 @@ PrefabInstance:
       value: OnStats
       objectReference: {fileID: 0}
     - target: {fileID: 24485886540110632, guid: e082d88bed6868f46bf177a1f75e40c7, type: 3}
+      propertyPath: m_ActionEvents.Array.data[7].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnShoot
+      objectReference: {fileID: 0}
+    - target: {fileID: 24485886540110632, guid: e082d88bed6868f46bf177a1f75e40c7, type: 3}
       propertyPath: m_ActionEvents.Array.data[2].m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: InventoryMenu, Assembly-CSharp
       objectReference: {fileID: 0}
@@ -5929,6 +5941,10 @@ PrefabInstance:
       value: InventoryMenu, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 24485886540110632, guid: e082d88bed6868f46bf177a1f75e40c7, type: 3}
+      propertyPath: m_ActionEvents.Array.data[7].m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: PlayerController, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 24485886540110632, guid: e082d88bed6868f46bf177a1f75e40c7, type: 3}
       propertyPath: m_ActionEvents.Array.data[4].m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
@@ -5938,6 +5954,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 24485886540110632, guid: e082d88bed6868f46bf177a1f75e40c7, type: 3}
       propertyPath: m_ActionEvents.Array.data[6].m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 24485886540110632, guid: e082d88bed6868f46bf177a1f75e40c7, type: 3}
+      propertyPath: m_ActionEvents.Array.data[7].m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 2595674465101692629, guid: e082d88bed6868f46bf177a1f75e40c7, type: 3}
@@ -6001,9 +6021,9 @@ GameObject:
   - component: {fileID: 181831724}
   - component: {fileID: 181831723}
   - component: {fileID: 181831725}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Tilemap
-  m_TagString: Ground
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -8974,9 +8994,9 @@ GameObject:
   - component: {fileID: 199840169}
   - component: {fileID: 199840168}
   - component: {fileID: 199840167}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Tilemap (2)
-  m_TagString: Ground
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -11405,6 +11425,17 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 3713577577503074171, guid: e082d88bed6868f46bf177a1f75e40c7, type: 3}
   m_PrefabInstance: {fileID: 157264885}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &334136615 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7188757934803143912, guid: e082d88bed6868f46bf177a1f75e40c7, type: 3}
+  m_PrefabInstance: {fileID: 157264885}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 334136613}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d1bc6d52691f474dbdf40d27a2b3dda, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &357151927
 GameObject:
   m_ObjectHideFlags: 0
@@ -11417,9 +11448,9 @@ GameObject:
   - component: {fileID: 357151931}
   - component: {fileID: 357151930}
   - component: {fileID: 357151929}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Tilemap (3)
-  m_TagString: Ground
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -13468,7 +13499,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 23
+    m_Bits: 87
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -13543,9 +13574,9 @@ GameObject:
   - component: {fileID: 580527843}
   - component: {fileID: 580527842}
   - component: {fileID: 580527841}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Tilemap (4)
-  m_TagString: Ground
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -17421,9 +17452,9 @@ GameObject:
   - component: {fileID: 1278533460}
   - component: {fileID: 1278533459}
   - component: {fileID: 1278533458}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Tilemap (9)
-  m_TagString: Ground
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -19009,9 +19040,9 @@ GameObject:
   - component: {fileID: 1328741409}
   - component: {fileID: 1328741408}
   - component: {fileID: 1328741407}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Tilemap (7)
-  m_TagString: Ground
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -21792,9 +21823,9 @@ GameObject:
   - component: {fileID: 1416641490}
   - component: {fileID: 1416641489}
   - component: {fileID: 1416641488}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Tilemap (1)
-  m_TagString: Ground
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -28315,9 +28346,9 @@ GameObject:
   - component: {fileID: 1875765084}
   - component: {fileID: 1875765083}
   - component: {fileID: 1875765082}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Tilemap (6)
-  m_TagString: Ground
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -30643,9 +30674,9 @@ GameObject:
   - component: {fileID: 1918542297}
   - component: {fileID: 1918542296}
   - component: {fileID: 1918542295}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Tilemap (8)
-  m_TagString: Ground
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
