@@ -76,9 +76,9 @@ public static class MapGen
     // all of the distinct rooms in MapGrid
     public static List<List<MapTile>> MapRooms { get; private set; }
 
-    public static void GenerateMap()
+    public static void GenerateMap(int gridSize)
     {
-        GridSize = 16;
+        GridSize = gridSize;
 
         // Step #1: Establish regions and set start point
         CreateRegions();

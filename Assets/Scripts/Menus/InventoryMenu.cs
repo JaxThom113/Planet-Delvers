@@ -11,9 +11,9 @@ public class InventoryMenu : MonoBehaviour
     [SerializeField] private Toggle inventoryToggle;
     [SerializeField] private Toggle mapToggle;
     [SerializeField] private Toggle statsToggle;
-    [SerializeField] private GameObject inventoryTab;
-    [SerializeField] private GameObject mapTab;
-    [SerializeField] private GameObject statsTab;
+    [SerializeField] public GameObject inventoryTab;
+    [SerializeField] public GameObject mapTab;
+    [SerializeField] public GameObject statsTab;
 
     void OnEnable()
     {

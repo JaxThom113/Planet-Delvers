@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
+using System;
 
 public class StartGameMenu : MonoBehaviour
 {
@@ -24,17 +25,23 @@ public class StartGameMenu : MonoBehaviour
     [SerializeField] private Toggle seedToggle;
     [SerializeField] private TMP_InputField seedInputField;
 
-    private int selectedLength;
-    private int selectedLevel;
+    private int length;
+    private int level;
     private int seed;
+
+    private bool isSeededRun;
+    private bool validSeed;
 
     void OnEnable()
     {
         HandleLengthColors();
         HandleLevelColors();
 
-        selectedLength = 1;
-        selectedLevel = 1;
+        length = 0;
+        level = 0;
+        seed = 0;
+
+        isSeededRun = false;
     }
 
     /*
@@ -47,6 +54,26 @@ public class StartGameMenu : MonoBehaviour
 
     public void OnLaunchClicked()
     {
+        if (isSeededRun)
+        {
+            if (validSeed)
+            {
+                GameSystem.Instance.seed = seed;
+            }
+            else
+            {
+                Debug.LogWarning("Invalid seed inputted, no longer seeded run & now generating new seed...");
+                GameSystem.Instance.seed = Environment.TickCount;
+            }
+        }
+        else
+        {
+            GameSystem.Instance.seed = Environment.TickCount;
+        }
+
+        GameSystem.Instance.length = length;
+        GameSystem.Instance.level = level;
+
         SceneManager.LoadScene("Overworld");
     }
 
@@ -58,19 +85,19 @@ public class StartGameMenu : MonoBehaviour
     public void OnShortLengthToggleChanged()
     {
         HandleLengthColors();
-        selectedLength = 1;
+        length = 0;
     }
 
     public void OnMediumLengthToggleChanged()
     {
         HandleLengthColors();
-        selectedLength = 2;
+        length = 1;
     }
 
     public void OnLongLengthToggleChanged()
     {
         HandleLengthColors();
-        selectedLength = 3;
+        length = 2;
     }
     
     private void HandleLengthColors()
@@ -90,19 +117,19 @@ public class StartGameMenu : MonoBehaviour
     public void OnEasyLevelToggleChanged()
     {
         HandleLevelColors();
-        selectedLevel = 1;
+        level = 0;
     }
 
     public void OnMediumLevelToggleChanged()
     {
         HandleLevelColors();
-        selectedLevel = 1;
+        level = 1;
     }
 
     public void OnHardLevelToggleChanged()
     {
         HandleLevelColors();
-        selectedLevel = 1;
+        level = 2;
     }
 
     private void HandleLevelColors()
@@ -122,5 +149,29 @@ public class StartGameMenu : MonoBehaviour
     public void OnSeedToggleChanged()
     {
         seedInputField.gameObject.SetActive(seedToggle.isOn);
+        isSeededRun = !isSeededRun;
+    }
+
+    public void OnSeedInputValueChanged()
+    {
+        if (int.TryParse(seedInputField.text, out int result))
+        {
+            // number given as a seed
+            seed = result;
+            validSeed = true;
+        }
+        else
+        {
+            // invalid seed given, ignore
+            validSeed = false;
+        }
+
+        // implement special seeds later down the line
+        // else if (SeedSystem.Instance.GetSpecialSeed(seedInputField.text) != null)
+        // {
+        //     // unique name given as a seed, check if it exists in SeedSystem as a special seed
+        //     GameData.SpecialSeed = seedInputField.text;
+        //     validSeed = true;
+        // }
     }
 }

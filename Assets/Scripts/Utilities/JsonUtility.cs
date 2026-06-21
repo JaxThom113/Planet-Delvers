@@ -94,7 +94,7 @@ public static class JsonUtility
 
         string currentTime = System.DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
 
-        string directory = Path.Combine(Application.dataPath, "Data", "Cache", currentTime);
+        string directory = Path.Combine(Application.streamingAssetsPath, "Data", "Cache", currentTime);
         Directory.CreateDirectory(directory);
 
         string path = Path.Combine(directory, fileName);
@@ -103,7 +103,7 @@ public static class JsonUtility
 
     public static List<List<MapTile>> LoadGridFromJson(string fileName)
     {
-        string path = Path.Combine(Application.dataPath, fileName);
+        string path = Path.Combine(Application.streamingAssetsPath, fileName);
 
         string json = File.ReadAllText(path);
         SerializableMapTileGrid serializableGrid = UnityEngine.JsonUtility.FromJson<SerializableMapTileGrid>(json);

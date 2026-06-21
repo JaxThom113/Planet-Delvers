@@ -10,6 +10,12 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private CreditsMenu creditsMenu;
     [SerializeField] private ConfirmMenu confirmMenu;
 
+    void Start()
+    {
+        // refresh game data upon returning to main menu
+        GameSystem.Instance.InitializeData();
+    }
+
     /*
         Main menu buttons
     */

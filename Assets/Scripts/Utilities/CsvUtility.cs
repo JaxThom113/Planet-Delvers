@@ -15,7 +15,7 @@ public static class CsvUtility
         }
 
         // create parent directory (i.e. 3x4_4)
-        string directory = Path.Combine(Application.dataPath, parentPath, directoryName);
+        string directory = Path.Combine(Application.streamingAssetsPath, parentPath, directoryName);
         Directory.CreateDirectory(directory);
 
         // create desired layer directory (foreground, background, entity)
@@ -37,7 +37,7 @@ public static class CsvUtility
 
         string currentTime = System.DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
 
-        string directory = Path.Combine(Application.dataPath, "Data", "Cache", currentTime);
+        string directory = Path.Combine(Application.streamingAssetsPath, "Data", "Cache", currentTime);
         Directory.CreateDirectory(directory);
 
         string path = Path.Combine(directory, fileName);
@@ -48,11 +48,11 @@ public static class CsvUtility
     {
         List<List<int>> grid = new List<List<int>>();
 
-        string path = Path.Combine(Application.dataPath, fileName);
+        string path = Path.Combine(Application.streamingAssetsPath, fileName);
 
         if (!File.Exists(path))
         {
-            Debug.LogWarning($"File not found: {path}");
+            //Debug.LogWarning($"File not found: {path}");
             return null;
         }
 

@@ -20,7 +20,7 @@ public abstract class PersistentSingleton<T> : MonoBehaviour where T : MonoBehav
                 if (instance == null)
                 {
                     // instantiate the prefab from the Resources/ folder, give its name
-                    instance = Instantiate(Resources.Load<T>("Systems/" + typeof(T).Name));
+                    instance = Instantiate(Resources.Load<T>(typeof(T).Name));
                 }
 
                 DontDestroyOnLoad(instance.gameObject);

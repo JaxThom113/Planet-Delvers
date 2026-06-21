@@ -156,7 +156,7 @@ public class CsvCreator : MonoBehaviour
 
     public int GetNextNumber(string parentPath, string baseName)
     {
-        string newPath = Path.Combine(Application.dataPath, parentPath);
+        string newPath = Path.Combine(Application.streamingAssetsPath, parentPath);
 
         if (!Directory.Exists(newPath))
             return 1;

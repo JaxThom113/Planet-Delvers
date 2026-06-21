@@ -9,6 +9,6 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenu.unity
     guid: b8f95f95b3e11c84fbf27a03b6d17fee
   - enabled: 1
-    path: Assets/Scenes/Overworld.unity
-    guid: ad04476debba2c547a2c43dccb8cfff1
+    path: Assets/Scenes/RandomOverworld.unity
+    guid: 2250eb1b12f9cf64db1f995a2b83675a
   m_configObjects: {}
