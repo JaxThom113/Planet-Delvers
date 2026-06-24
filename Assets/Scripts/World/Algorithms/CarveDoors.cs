@@ -90,10 +90,8 @@ public static class CarveDoors
                 grid[current.position.y + directions[neighborDirection].y][current.position.x + directions[neighborDirection].x] = neighborTile;
             }
 
-            // foreach (List<MapTile> room in GetDisconnectedRooms())
-            // {
-
-            // }  
+            // find groups of rooms that are disconnected and connect them
+            ConnectDisconnectedRoomGroups(grid, RoomGen.GetRooms(), region);
         }
 
         // connect region 5 to 1, making a door out of the start room
@@ -174,66 +172,153 @@ public static class CarveDoors
         grid[c[2]][c[3]] = neighborTile;
     }
 
-    private static List<MapTile> GetDisconnectedRooms()
+    private static void ConnectDisconnectedRoomGroups(List<List<MapTile>> grid, List<List<MapTile>> allRooms, int region)
     {
-        // find disconnected rooms or groups of rooms
-        // and add a door to connect them to the rest of the region
-        return null;
+        List<List<List<MapTile>>> roomGroups = GetConnectedRoomGroups(grid, allRooms, region);
+
+        while (roomGroups.Count > 1)
+        {
+            // get groups of connected rooms repeatedly until there is only 1 room group
+            roomGroups = GetConnectedRoomGroups(grid, allRooms, region);
+
+            if (roomGroups.Count <= 1)
+                return;
+
+            for (int i = 1; i < roomGroups.Count; i++)
+            {
+                // check for connections between current groups to connection them
+                int[] connection = FindRoomGroupConnections(grid, roomGroups[0], roomGroups[i], region);
+
+                if (connection == null)
+                    continue;
+                    
+                // there is a possible connection, so connect the room groups here
+                ConnectRegions(grid, connection);
+                break;
+            }
+        }
     }
 
-    private static bool AreAllRoomsConnected(List<List<MapTile>> rooms, List<List<MapTile>> grid, int region)
+    private static List<List<List<MapTile>>> GetConnectedRoomGroups(List<List<MapTile>> grid, List<List<MapTile>> allRooms, int region)
     {
-        if (rooms.Count <= 1) return true;
-        
-        // Build an adjacency graph between rooms based on doors
-        var roomGraph = new Dictionary<List<MapTile>, HashSet<List<MapTile>>>();
-        
-        // For each room, find which other rooms it's connected to via doors
-        foreach (var room in rooms)
+        List<List<MapTile>> regionRooms = new List<List<MapTile>>();
+        foreach (List<MapTile> room in allRooms)
         {
-            if (room.Count == 0 || room[0].region != region) continue;
-            roomGraph[room] = new HashSet<List<MapTile>>();
-            
-            foreach (var tile in room)
+            if (room.Count > 0 && room[0].region == region)
+                regionRooms.Add(room);
+        }
+
+        Dictionary<Vector2Int, List<MapTile>> roomByPosition = new Dictionary<Vector2Int, List<MapTile>>();
+        foreach (List<MapTile> room in regionRooms)
+        {
+            foreach (MapTile tile in room)
             {
-                // Check each door and see if it connects to another room
-                for (int i = 0; i < 4; i++)
+                roomByPosition[tile.position] = room;
+            }
+        }
+
+        Dictionary<List<MapTile>, HashSet<List<MapTile>>> graph = new Dictionary<List<MapTile>, HashSet<List<MapTile>>>();
+        foreach (List<MapTile> room in regionRooms)
+        {
+            graph[room] = new HashSet<List<MapTile>>();
+        }
+
+        foreach (List<MapTile> room in regionRooms)
+        {
+            foreach (MapTile mapTile in room)
+            {
+                MapTile tile = grid[mapTile.position.y][mapTile.position.x];
+
+                for (int i = 0; i < directions.Length; i++)
                 {
-                    if (tile.doors[i])
+                    if (!tile.doors[i])
+                        continue;
+
+                    Vector2Int neighbor = tile.position + directions[i];
+
+                    if (!MapGenUtility.InBounds(neighbor))
+                        continue;
+
+                    if (roomByPosition.TryGetValue(neighbor, out List<MapTile> neighborRoom) && neighborRoom != room)
                     {
-                        Vector2Int neighbor = tile.position + directions[i];
-                        var neighborTile = grid[neighbor.y][neighbor.x];
-                        
-                        // Find which room this tile belongs to
-                        foreach (var otherRoom in rooms)
-                        {
-                            if (otherRoom != room && otherRoom.Contains(neighborTile))
-                                roomGraph[room].Add(otherRoom);
-                        }
+                        graph[room].Add(neighborRoom);
+                        graph[neighborRoom].Add(room);
                     }
                 }
             }
         }
-        
-        // BFS from first room to see if all rooms are reachable
-        var visited = new HashSet<List<MapTile>>();
-        var queue = new Queue<List<MapTile>>();
-        queue.Enqueue(rooms[0]);
-        visited.Add(rooms[0]);
-        
-        while (queue.Count > 0)
+
+        List<List<List<MapTile>>> groups = new List<List<List<MapTile>>>();
+        HashSet<List<MapTile>> visited = new HashSet<List<MapTile>>();
+
+        foreach (List<MapTile> room in regionRooms)
         {
-            var current = queue.Dequeue();
-            foreach (var neighbor in roomGraph[current])
+            if (visited.Contains(room))
+                continue;
+
+            List<List<MapTile>> group = new List<List<MapTile>>();
+            Queue<List<MapTile>> queue = new Queue<List<MapTile>>();
+
+            visited.Add(room);
+            queue.Enqueue(room);
+
+            while (queue.Count > 0)
             {
-                if (!visited.Contains(neighbor))
+                List<MapTile> current = queue.Dequeue();
+                group.Add(current);
+
+                foreach (List<MapTile> neighbor in graph[current])
                 {
-                    visited.Add(neighbor);
-                    queue.Enqueue(neighbor);
+                    if (visited.Add(neighbor))
+                        queue.Enqueue(neighbor);
+                }
+            }
+
+            groups.Add(group);
+        }
+
+        return groups;
+    }
+
+    private static int[] FindRoomGroupConnections(List<List<MapTile>> grid, List<List<MapTile>> roomGroupA, List<List<MapTile>> roomGroupB, int region)
+    {
+        HashSet<Vector2Int> groupBPositions = new HashSet<Vector2Int>();
+        foreach (List<MapTile> room in roomGroupB)
+        {
+            foreach (MapTile tile in room)
+            {
+                groupBPositions.Add(tile.position);
+            }
+        }
+
+        // check if a MapTile in group A neighbors a MapTile of group B
+        List<int[]> connections = new List<int[]>();
+
+        foreach (List<MapTile> room in roomGroupA)
+        {
+            foreach (MapTile tile in room)
+            {
+                for (int i = 0; i < directions.Length; i++)
+                {
+                    Vector2Int neighbor = tile.position + directions[i];
+
+                    if (!MapGenUtility.InBounds(neighbor))
+                        continue;
+
+                    if (grid[neighbor.y][neighbor.x].region != region)
+                        continue;
+
+                    if (!groupBPositions.Contains(neighbor))
+                        continue;
+
+                    connections.Add(new int[6]{ tile.position.y, tile.position.x, neighbor.y, neighbor.x, i, i ^ 1});
                 }
             }
         }
-        
-        return visited.Count == rooms.Count;
+
+        if (connections.Count == 0)
+            return null;
+
+        return connections[UnityEngine.Random.Range(0, connections.Count)];
     }
 }
