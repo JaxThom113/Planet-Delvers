@@ -24,7 +24,7 @@ public class Door : MonoBehaviour
     private readonly Vector3[] exitPositions = 
     {
         new Vector3(0, 3.1f, 0),   // up
-        new Vector3(0, -5, 0),     // Sdown
+        new Vector3(0, -5, 0),     // down
         new Vector3(-4, -1.9f, 0), // left
         new Vector3(4, -1.9f, 0),   // right
     };
@@ -99,8 +99,9 @@ public class Door : MonoBehaviour
 
         mainCamera.ToggleSnapping(true);
 
-        // place the player outside the second door
+        // place the player outside the second door, set new temp respawn point
         yield return StartCoroutine(LerpGameObject(player, transform.position + exitPositions[direction]));
+        playerController.tempRespawn = transform.position + exitPositions[direction];
 
         // re-enable player's control
         playerInput.enabled = true;

@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class PlayerAnimations : MonoBehaviour
 {
+    [Header("Player Component References")]
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private GroundCheck groundCheck;
+    [SerializeField] private HurtboxCheck hurtboxCheck;
     [SerializeField] private PlayerController playerController;
 
     private SpriteRenderer sprite;
@@ -30,6 +32,8 @@ public class PlayerAnimations : MonoBehaviour
     }
 
     private PlayerState currentState;
+
+    private bool isHurt;
 
     void Start()
     {
@@ -92,6 +96,21 @@ public class PlayerAnimations : MonoBehaviour
                 else if (playerController.MovementInput.y < 0)
                     currentState = PlayerState.Fall_Down;
                 break;
+        }
+
+        if (!isHurt && hurtboxCheck.IsHazard)
+        {
+            StartCoroutine(HazardHurtAnimation());
+        }
+        else if (!isHurt && hurtboxCheck.IsEnemy)
+        {
+            StartCoroutine(EnemyHurtAnimation());
+        }
+
+        if (isHurt)
+        {
+            currentState = PlayerState.Hurt;
+            return;
         }
     }
 
@@ -199,5 +218,19 @@ public class PlayerAnimations : MonoBehaviour
                 case PlayerState.Prone: currentFacing = PlayerFacing.Left_Prone; break;
             }
         }
+    }
+
+    private IEnumerator HazardHurtAnimation()
+    {
+        isHurt = true;
+        yield return new WaitForSeconds(playerController.resetSpeed);
+        isHurt = false;
+    }
+
+    private IEnumerator EnemyHurtAnimation()
+    {
+        isHurt = true;
+        yield return new WaitForSeconds(playerController.hurtLength);
+        isHurt = false;
     }
 }

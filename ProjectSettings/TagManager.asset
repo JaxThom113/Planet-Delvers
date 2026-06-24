@@ -14,9 +14,9 @@ TagManager:
   - Water
   - UI
   - Ground
-  - 
-  - 
-  - 
+  - Hazard
+  - Enemy
+  - Player
   - 
   - 
   - 
@@ -40,8 +40,11 @@ TagManager:
   - 
   - 
   m_SortingLayers:
-  - name: Containers
-    uniqueID: 740148371
+  - name: Environment
+    uniqueID: 4245659495
+    locked: 0
+  - name: Entities
+    uniqueID: 1077690197
     locked: 0
   - name: Default
     uniqueID: 0

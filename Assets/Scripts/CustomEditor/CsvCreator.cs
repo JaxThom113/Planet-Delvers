@@ -18,6 +18,7 @@ public class CsvCreator : MonoBehaviour
     [Header("Tile References")]
     [SerializeField] private Tile[] fgTiles;     // foreground, tiles player can collide with
     [SerializeField] private Tile[] bgTiles;     // background, tiles in the back for style
+    [SerializeField] private Tile[] hazardTiles; // hazards, tiles that damage the player and reset their position
     [SerializeField] private Tile[] entityTiles; // entities, specifies what entities (enemies, items, etc.) will spawn and where
 
     void Start()
@@ -41,6 +42,7 @@ public class CsvCreator : MonoBehaviour
 
             List<List<List<int>>> fgGrids = new List<List<List<int>>>();
             List<List<List<int>>> bgGrids = new List<List<List<int>>>();
+            List<List<List<int>>> hazardGrids = new List<List<List<int>>>();
             List<List<List<int>>> entityGrids = new List<List<List<int>>>();
 
             // read from top left -> bottom right
@@ -54,10 +56,12 @@ public class CsvCreator : MonoBehaviour
                     // get the grids to save for fg, bg, and entity tilemaps of this cell
                     List<List<int>> fgGrid = ReadTilemap(1, rt, px, py);
                     List<List<int>> bgGrid = ReadTilemap(2, rt, px, py);
-                    List<List<int>> entityGrid = ReadTilemap(3, rt, px, py);
+                    List<List<int>> hazardGrid = ReadTilemap(3, rt, px, py);
+                    List<List<int>> entityGrid = ReadTilemap(4, rt, px, py);
 
                     fgGrids.Add(fgGrid);
                     bgGrids.Add(bgGrid);
+                    hazardGrids.Add(hazardGrid);
                     entityGrids.Add(entityGrid);
                 }
             }
@@ -87,6 +91,17 @@ public class CsvCreator : MonoBehaviour
                     $"Data/Rooms/{rt.dims.x}/{rt.dims.y}/",
                     $"{rt.dims.x}x{rt.dims.y}_{nextNum}/",
                     $"Bg/",
+                    $"{i+1}.csv"
+                );
+            }
+
+            for (int i = 0; i < hazardGrids.Count; i++)
+            {
+                CsvUtility.SaveGridToCSV(
+                    hazardGrids[i], 
+                    $"Data/Rooms/{rt.dims.x}/{rt.dims.y}/",
+                    $"{rt.dims.x}x{rt.dims.y}_{nextNum}/",
+                    $"Hazard/",
                     $"{i+1}.csv"
                 );
             }
@@ -127,7 +142,11 @@ public class CsvCreator : MonoBehaviour
                         thisTile = rt.bg.GetTile(new Vector3Int(dx, dy, 0));
                         currentTiles = bgTiles;
                         break; 
-                    case 3: // entity
+                    case 3: // hazard
+                        thisTile = rt.hazard.GetTile(new Vector3Int(dx, dy, 0));
+                        currentTiles = hazardTiles;
+                        break;
+                    case 4: // entity
                         thisTile = rt.entity.GetTile(new Vector3Int(dx, dy, 0));
                         currentTiles = entityTiles;
                         break; 

@@ -30,7 +30,7 @@ public class Bullet : MonoBehaviour
         if (collision.CompareTag("Enemy"))
         {
             // delete the enemy that was hit
-            Destroy(collision.gameObject);
+            Destroy(collision.GetComponentInParent<Rigidbody2D>().gameObject);
             Destroy(gameObject);
         }
     }

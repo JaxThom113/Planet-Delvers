@@ -255,7 +255,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 4184570131739418687}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.37166667
+  m_Size: 0.31857142
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -563,11 +563,11 @@ MonoBehaviour:
   m_Content: {fileID: 6288168143658237109}
   m_Horizontal: 0
   m_Vertical: 1
-  m_MovementType: 1
+  m_MovementType: 2
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
-  m_ScrollSensitivity: 1
+  m_ScrollSensitivity: 10
   m_Viewport: {fileID: 8989408900074047736}
   m_HorizontalScrollbar: {fileID: 0}
   m_VerticalScrollbar: {fileID: 9145761176998949964}
@@ -650,9 +650,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 266.49997, y: -188.54996}
-  m_SizeDelta: {x: 533, y: 377.1}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 533, y: 700}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &5064002757707585503
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -681,22 +681,24 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "How to Start a game\n\nLength = How large a world generates/how long it
-    takes to complete\n    - small = 16x16 world, 20 minutes\n    - medium = 24x24
-    world, 40 minutes\n    - long = 32x32 world, 1 hour\n\nLevel = difficulty rating
-    of a world, tells how many enemies spawn and what damage they deal\n    - easy
-    = fewer enemies, less damage\n    - standard = normal enemy count, base damage\n   
-    - hard = more enemies, higher damage\n\nSeed = if enabled, you can play a specific
-    world defined by a seed\n\nHow to Play\n\nWhen you launch, you will be placed
-    in a randomly generated word in a random cell\n\n1. First you must explore the
-    first accessible area and find and defeat its boss to acquire your first ability\n\n2.
-    After getting your first random ability, it will enable you to acess the second
-    area for your world\n\n3. From there, defeat the second boss and get the second
-    ability, proceed to the third area, and repeat until tou complete area 4\n\n4.
-    After completing the fourth and final area, your job is complete and you can
-    extract\n\n5. When you extract, you have a set timer to reach a random room to
-    catch your escape ship before it leaves - make sure to get there on time!\n\nOnce
-    you make it to the escape ship, you have succeeded on your mission!"
+  m_text: "Controls\n\n- WASD / Arrow keys = move\n- Space = jump\n- J = shoot\n-
+    I/M/K = inventory, map, stats menus\n- Escape = pause menu\n\nHow to start a
+    game\n\nLength = How large a world generates/how long it takes to complete\n   
+    - small = 16x16 world, 20 minutes\n    - medium = 24x24 world, 30 minutes\n   
+    - long = 32x32 world, 40 minutes\n\nLevel = difficulty rating of a world, tells
+    how many enemies spawn and what damage they deal\n    - easy = fewer enemies,
+    less damage\n    - standard = normal enemy count, base damage\n    - hard = more
+    enemies, higher damage\n\nSeed = if enabled, you can play a specific world defined
+    by a seed\n\nHow to Play\n\nWhen you launch, you will be placed in a randomly
+    generated word in a random cell\n\n1. First you must explore the first accessible
+    area and find and defeat its boss to acquire your first ability\n\n2. After getting
+    your first random ability, it will enable you to acess the second area for your
+    world\n\n3. From there, defeat the second boss and get the second ability, proceed
+    to the third area, and repeat until tou complete area 4\n\n4. After completing
+    the fourth and final area, your job is complete and you can extract\n\n5. When
+    you extract, you have a set timer to reach a random room to catch your escape
+    ship before it leaves - make sure to get there on time!\n\nOnce you make it to
+    the escape ship, you have succeeded on your mission!"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 2e900895e2b2ef94e89e860b3f9a502b, type: 2}
   m_sharedMaterial: {fileID: 7426419192688551808, guid: 2e900895e2b2ef94e89e860b3f9a502b, type: 2}
@@ -1097,7 +1099,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 600}
+  m_SizeDelta: {x: 0, y: 700}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &8595592892936980177
 GameObject:

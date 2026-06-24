@@ -30,6 +30,7 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
     [SerializeField] private Grid worldGrid;
     [SerializeField] private Tile[] fgTiles;
     [SerializeField] private Tile[] bgTiles;
+    [SerializeField] private Tile[] hazardTiles;
     [SerializeField] private Tile[] entityTiles;
 
     [Header("Entity Generation")]
@@ -171,6 +172,15 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
                     roomObject.transform.SetParent(worldGrid.transform);
                     roomObject.transform.localPosition = new Vector3(px, FlipPY(py), 0);
 
+                    // add background tilemap layer
+                    GameObject bg = new GameObject($"Bg");
+                    bg.transform.SetParent(roomObject.transform, false);
+                    Tilemap bgTilemap = bg.AddComponent<Tilemap>();
+                    TilemapRenderer bgRenderer = bg.AddComponent<TilemapRenderer>();  
+                    bgTilemap.color = new Color(1, 1, 1, 32f/255f); // lower opacity
+                    bgRenderer.sortingLayerName = "Environment";
+                    bgRenderer.sortingOrder = 0;
+
                     // add foreground tilemap layer
                     GameObject fg = new GameObject($"Fg");
                     fg.transform.SetParent(roomObject.transform, false);
@@ -181,14 +191,16 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
                     fgRenderer.sortingOrder = 1;
                     fg.layer = LayerMask.NameToLayer("Ground"); // make sure to set the layer so the player properly interacts with ground
 
-                    // add background tilemap layer
-                    GameObject bg = new GameObject($"Bg");
-                    bg.transform.SetParent(roomObject.transform, false);
-                    Tilemap bgTilemap = bg.AddComponent<Tilemap>();
-                    TilemapRenderer bgRenderer = bg.AddComponent<TilemapRenderer>();  
-                    bgTilemap.color = new Color(1, 1, 1, 32f/255f); // lower opacity
-                    bgRenderer.sortingLayerName = "Environment";
-                    bgRenderer.sortingOrder = 0;
+                    // add hazard tilemap layer
+                    GameObject hazard = new GameObject($"Hazard");
+                    hazard.transform.SetParent(roomObject.transform, false);
+                    Tilemap hazardTilemap = hazard.AddComponent<Tilemap>();
+                    TilemapRenderer hazardRenderer = hazard.AddComponent<TilemapRenderer>();
+                    TilemapCollider2D hazardCollider = hazard.AddComponent<TilemapCollider2D>();
+                    hazardRenderer.sortingLayerName = "Environment";
+                    hazardRenderer.sortingOrder = 1;
+                    hazard.layer = LayerMask.NameToLayer("Hazard"); // make sure to set the layer so the player properly interacts with ground
+                    hazardCollider.isTrigger = true;
 
                     // add entity tilemap layer
                     GameObject entity = new GameObject($"Entity");
@@ -202,7 +214,8 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
                     // load csv layout data
                     string path = $"Data/Rooms/Special/Start/";
                     List<List<int>> fgGrid = CsvUtility.LoadGridFromCSV(path + $"Fg/1.csv");  
-                    List<List<int>> bgGrid = CsvUtility.LoadGridFromCSV(path + $"Bg/1.csv");  
+                    List<List<int>> bgGrid = CsvUtility.LoadGridFromCSV(path + $"Bg/1.csv");
+                    List<List<int>> hazardGrid = CsvUtility.LoadGridFromCSV(path + $"Hazard/1.csv");  
                     List<List<int>> entityGrid = CsvUtility.LoadGridFromCSV(path + $"Entity/1.csv");  
                     
                     // draw the tiles to this room
@@ -210,8 +223,10 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
                         DrawToTilemap(1, fgTilemap, fgGrid, 5);
                     if (bgGrid != null)
                         DrawToTilemap(2, bgTilemap, bgGrid, 5);
+                    if (hazardGrid != null)
+                        DrawToTilemap(3, hazardTilemap, hazardGrid, 5);
                     if (entityGrid != null)
-                        DrawToTilemap(3, entityTilemap, entityGrid, 5);
+                        DrawToTilemap(4, entityTilemap, entityGrid, 5);
 
                     // move the player to the starting room
                     player.transform.localPosition = new Vector3(px + 6, FlipPY(py) + 4, 0);
@@ -257,6 +272,15 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
                     roomObject.transform.SetParent(worldGrid.transform);
                     roomObject.transform.localPosition = new Vector3(px, FlipPY(py), 0);
 
+                    // add background tilemap layer
+                    GameObject bg = new GameObject($"Bg");
+                    bg.transform.SetParent(roomObject.transform, false);
+                    Tilemap bgTilemap = bg.AddComponent<Tilemap>();
+                    TilemapRenderer bgRenderer = bg.AddComponent<TilemapRenderer>();  
+                    bgTilemap.color = new Color(1, 1, 1, 32f/255f); // lower opacity
+                    bgRenderer.sortingLayerName = "Environment";
+                    bgRenderer.sortingOrder = 0;
+
                     // add foreground tilemap layer
                     GameObject fg = new GameObject($"Fg");
                     fg.transform.SetParent(roomObject.transform, false);
@@ -267,14 +291,16 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
                     fgRenderer.sortingOrder = 1;
                     fg.layer = LayerMask.NameToLayer("Ground"); // make sure to set the layer so the player properly interacts with ground
 
-                    // add background tilemap layer
-                    GameObject bg = new GameObject($"Bg");
-                    bg.transform.SetParent(roomObject.transform, false);
-                    Tilemap bgTilemap = bg.AddComponent<Tilemap>();
-                    TilemapRenderer bgRenderer = bg.AddComponent<TilemapRenderer>();  
-                    bgTilemap.color = new Color(1, 1, 1, 32f/255f); // lower opacity
-                    bgRenderer.sortingLayerName = "Environment";
-                    bgRenderer.sortingOrder = 0;
+                    // add hazard tilemap layer
+                    GameObject hazard = new GameObject($"Hazard");
+                    hazard.transform.SetParent(roomObject.transform, false);
+                    Tilemap hazardTilemap = hazard.AddComponent<Tilemap>();
+                    TilemapRenderer hazardRenderer = hazard.AddComponent<TilemapRenderer>();
+                    TilemapCollider2D hazardCollider = hazard.AddComponent<TilemapCollider2D>();
+                    hazardRenderer.sortingLayerName = "Environment";
+                    hazardRenderer.sortingOrder = 1;
+                    hazard.layer = LayerMask.NameToLayer("Hazard"); // make sure to set the layer so the player properly interacts with ground
+                    hazardCollider.isTrigger = true;
 
                     // add entity tilemap layer
                     GameObject entity = new GameObject($"Entity");
@@ -288,13 +314,15 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
                     // load csv layout data
                     List<List<int>> fgGrid = CsvUtility.LoadGridFromCSV(path + $"{dims.x}x{dims.y}_{layoutNum}/Fg/{index}.csv");  
                     List<List<int>> bgGrid = CsvUtility.LoadGridFromCSV(path + $"{dims.x}x{dims.y}_{layoutNum}/Bg/{index}.csv");  
+                    List<List<int>> hazardGrid = CsvUtility.LoadGridFromCSV(path + $"{dims.x}x{dims.y}_{layoutNum}/Hazard/{index}.csv");  
                     List<List<int>> entityGrid = CsvUtility.LoadGridFromCSV(path + $"{dims.x}x{dims.y}_{layoutNum}/Entity/{index}.csv");  
 
                     // fallback to Base if no custom layouts exist
                     if (fgGrid == null && bgGrid == null && entityGrid == null)
                     {
                         fgGrid = CsvUtility.LoadGridFromCSV(path + $"{dims.x}x{dims.y}_Base/Fg/{index}.csv");  
-                        bgGrid = CsvUtility.LoadGridFromCSV(path + $"{dims.x}x{dims.y}_Base/Bg/{index}.csv");  
+                        bgGrid = CsvUtility.LoadGridFromCSV(path + $"{dims.x}x{dims.y}_Base/Bg/{index}.csv"); 
+                        hazardGrid = CsvUtility.LoadGridFromCSV(path + $"{dims.x}x{dims.y}_Base/Hazard/{index}.csv");
                         entityGrid = CsvUtility.LoadGridFromCSV(path + $"{dims.x}x{dims.y}_Base/Entity/{index}.csv"); 
                     }
                     
@@ -303,12 +331,16 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
                         DrawToTilemap(1, fgTilemap, fgGrid, region);
                     if (bgGrid != null)
                         DrawToTilemap(2, bgTilemap, bgGrid, region);
+                    if (hazardGrid != null)
+                        DrawToTilemap(3, hazardTilemap, hazardGrid, region);
                     if (entityGrid != null)
-                        DrawToTilemap(3, entityTilemap, entityGrid, region);
+                        DrawToTilemap(4, entityTilemap, entityGrid, region);
 
                     // create a container to hold the entities for this room
                     GameObject entityContainer = new GameObject($"EntityContainer");
                     entityContainer.transform.SetParent(roomObject.transform, false);
+                    fg.layer = LayerMask.NameToLayer("Ground"); // make sure to set the layer so the player properly interacts with ground
+
 
                     // spawn entities for the entity grid
                     if (entityGrid != null)
@@ -319,15 +351,19 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
                             {
                                 int tile = entityGrid[17 - ey][ex];
 
+                                GameObject enemy = enemies[0];
+
                                 // get the world position of an entity tile
                                 Vector3 tilePos = entityTilemap.GetCellCenterWorld(new Vector3Int(ex, ey, 0));
                                 switch (tile)
                                 {
-                                    case 1: Instantiate(enemies[0], tilePos, Quaternion.identity, entityContainer.transform); break; // jumper
-                                    case 2: Instantiate(enemies[1], tilePos, Quaternion.identity, entityContainer.transform); break; // dropper
-                                    case 3: Instantiate(enemies[2], tilePos, Quaternion.identity, entityContainer.transform); break; // scuttler
-                                    case 4: Instantiate(enemies[3], tilePos, Quaternion.identity, entityContainer.transform); break; // drifter
+                                    case 1: enemy = Instantiate(enemies[0], tilePos, Quaternion.identity, entityContainer.transform); break; // jumper
+                                    case 2: enemy = Instantiate(enemies[1], tilePos, Quaternion.identity, entityContainer.transform); break; // dropper
+                                    case 3: enemy = Instantiate(enemies[2], tilePos, Quaternion.identity, entityContainer.transform); break; // scuttler
+                                    case 4: enemy = Instantiate(enemies[3], tilePos, Quaternion.identity, entityContainer.transform); break; // drifter
                                 }
+
+                                enemy.layer = LayerMask.NameToLayer("Enemy");
                             }
                         }
                     }
@@ -403,7 +439,8 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
         {
             case 1: currentTiles = fgTiles; break;
             case 2: currentTiles = bgTiles; break;
-            case 3: currentTiles = entityTiles; break;
+            case 3: currentTiles = hazardTiles; break;
+            case 4: currentTiles = entityTiles; break;
         }
 
         Color[] currentColors = new Color[5]{Color.white, Color.white, Color.white, Color.white, Color.white};
@@ -432,7 +469,7 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
                 }
 
                 // pick a random color for this tile of its region
-                if (layer != 3)
+                if (layer < 3)
                 {
                     Color randColor = currentColors[UnityEngine.Random.Range(0, currentColors.Length)];
                     tilemap.SetTileFlags(new Vector3Int(gx, gy, 0), TileFlags.None);
