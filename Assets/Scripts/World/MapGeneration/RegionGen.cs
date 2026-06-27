@@ -7,8 +7,6 @@ public static class RegionGen
 {
     private static List<List<int>> regionGrid;
     private static int attempt;
-    
-    private static Vector2Int startRoomLocation;
 
     /*
         Main functions
@@ -32,17 +30,7 @@ public static class RegionGen
             return CreateRegions();
         }
 
-        // set start room location somewhere in region 1
-        HashSet<Vector2Int> region1Tiles = MapGenUtility.GetTiles(regionGrid, 1);
-        startRoomLocation = region1Tiles.ElementAt(Random.Range(0, region1Tiles.Count));
-        regionGrid[startRoomLocation.y][startRoomLocation.x] = 5;
-
         return regionGrid;
-    }
-
-    public static Vector2Int GetStartPoint()
-    {
-        return startRoomLocation;
     }
 
     /*

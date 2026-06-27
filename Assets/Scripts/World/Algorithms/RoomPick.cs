@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using UnityEngine;
 
 public static class RoomPick
@@ -28,12 +30,72 @@ public static class RoomPick
     {
         allRooms = new List<List<MapTile>>();
 
-        // before making all the other rooms, establish the starting room
-        MapTile startTile = grid[MapGen.StartRoom.y][MapGen.StartRoom.x];
-        startTile.SetPosition(MapGen.StartRoom);
-        startTile.SetRegion(5);
-        grid[MapGen.StartRoom.y][MapGen.StartRoom.x] = startTile;
+        // string specialRoomsPath = Path.Combine(Application.streamingAssetsPath, "Data/Rooms/Special");
+        // string[] specialRooms = Directory.GetDirectories(specialRoomsPath);
 
+        // before making random rooms, add the special rooms (start room, boss rooms, item rooms)
+        for (int region = 1; region <= 4; region++)
+        {
+            HashSet<Vector2Int> targetStructureTiles = MapGenUtility.GetTiles(MapGen.StructureGrid, region);
+            
+            int rand;
+            MapTile thisTile;
+
+            // create the start room
+            if (region == 1)
+            {
+                // set start room location somewhere in region 1
+                rand = Random.Range(0, targetStructureTiles.Count);
+                Vector2Int startLoc = targetStructureTiles.ElementAt(rand);
+                targetStructureTiles.Remove(startLoc);
+
+                // update this tile
+                thisTile = grid[startLoc.y][startLoc.x];
+                thisTile.SetPosition(startLoc);
+                thisTile.SetRegion(region);
+                thisTile.SetName("Start");
+                grid[startLoc.y][startLoc.x] = thisTile; // write back
+
+                List<MapTile> startRoomToAdd = new List<MapTile>{ grid[startLoc.y][startLoc.x] };
+                allRooms.Add(startRoomToAdd);
+            }
+
+            // create 1 boss room for this region
+            rand = Random.Range(0, targetStructureTiles.Count);
+            Vector2Int bossLoc = targetStructureTiles.ElementAt(rand);
+            targetStructureTiles.Remove(bossLoc);
+
+            thisTile = grid[bossLoc.y][bossLoc.x];
+            thisTile.SetPosition(bossLoc);
+            thisTile.SetRegion(region);
+            thisTile.SetName("Boss" + region);
+            grid[bossLoc.y][bossLoc.x] = thisTile; // write back
+
+            List<MapTile> bossRoomToAdd = new List<MapTile>{ grid[bossLoc.y][bossLoc.x] };
+            allRooms.Add(bossRoomToAdd);
+
+            // create 1 item room for this region
+            rand = Random.Range(0, targetStructureTiles.Count);
+            Vector2Int itemLoc = targetStructureTiles.ElementAt(rand);
+            targetStructureTiles.Remove(itemLoc);
+
+            thisTile = grid[itemLoc.y][itemLoc.x];
+            thisTile.SetPosition(itemLoc);
+            thisTile.SetRegion(region);
+            thisTile.SetName("Item" + region);
+            grid[itemLoc.y][itemLoc.x] = thisTile; // write back
+
+            List<MapTile> itemRoomToAdd = new List<MapTile>{ grid[itemLoc.y][itemLoc.x] };
+            allRooms.Add(itemRoomToAdd);
+
+            /*
+            
+                add other special rooms if wanted
+
+            */
+        }
+
+        // create rooms in the remaining space in the structure grid
         for (int region = 1; region <= 4; region++)
         {
             HashSet<Vector2Int> targetStructureTiles = MapGenUtility.GetTiles(MapGen.StructureGrid, region);

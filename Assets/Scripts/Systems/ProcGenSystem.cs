@@ -88,6 +88,27 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
                     case 4: currentTileSet = r4Tiles; break;
                 }
 
+                // check for special rooms first
+                if (MapGen.MapGrid[y][x].name != null)
+                {
+                    string name = MapGen.MapGrid[y][x].name;
+                    if (name.Contains("Start"))
+                    {
+                        roomsTilemap.SetTile(new Vector3Int(x, FlipY(y), 0), currentTileSet[16]);
+                        continue;
+                    }
+                    else if (name.Contains("Boss"))
+                    {
+                        roomsTilemap.SetTile(new Vector3Int(x, FlipY(y), 0), currentTileSet[17]);
+                        continue;
+                    }
+                    else if (name.Contains("Item"))
+                    {
+                        roomsTilemap.SetTile(new Vector3Int(x, FlipY(y), 0), currentTileSet[18]);
+                        continue;
+                    }
+                }
+
                 // use bitmask to get right tiles to make connected rooms
                 int connectionsMask = 0;
                 if (MapGen.MapGrid[y][x].connections[0]) connectionsMask |= 1; // up
@@ -157,12 +178,12 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
 
     private void SetupWorld()
     {
-        // make the starting room
+        // make special rooms
         for (int y = 0; y < MapGen.GridSize; y++)
         {
             for (int x = 0; x < MapGen.GridSize; x++)
             {
-                if (MapGen.MapGrid[y][x].region == 5)
+                if (MapGen.MapGrid[y][x].name != null)
                 {
                     int py = y * 18;
                     int px = x * 32;
@@ -211,25 +232,31 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
                     entityRenderer.sortingLayerName = "Environment";
                     entityRenderer.sortingOrder = 2;
 
-                    // load csv layout data
-                    string path = $"Data/Rooms/Special/Start/";
+                    // load csv layout data (special rooms will always be 1x1)
+                    string path = $"Data/Rooms/Special/{MapGen.MapGrid[y][x].name}/";
                     List<List<int>> fgGrid = CsvUtility.LoadGridFromCSV(path + $"Fg/1.csv");  
                     List<List<int>> bgGrid = CsvUtility.LoadGridFromCSV(path + $"Bg/1.csv");
                     List<List<int>> hazardGrid = CsvUtility.LoadGridFromCSV(path + $"Hazard/1.csv");  
                     List<List<int>> entityGrid = CsvUtility.LoadGridFromCSV(path + $"Entity/1.csv");  
+
+                    bool colors = true;
+
+                    if (MapGen.MapGrid[y][x].name == "Start")
+                    {
+                        // move the player to the starting room
+                        player.transform.localPosition = new Vector3(px + 6, FlipPY(py) + 4, 0);
+                        colors = false;
+                    }
                     
                     // draw the tiles to this room
                     if (fgGrid != null)
-                        DrawToTilemap(1, fgTilemap, fgGrid, 5);
+                        DrawToTilemap(1, fgTilemap, fgGrid, MapGen.MapGrid[y][x].region, colors);
                     if (bgGrid != null)
-                        DrawToTilemap(2, bgTilemap, bgGrid, 5);
+                        DrawToTilemap(2, bgTilemap, bgGrid, MapGen.MapGrid[y][x].region, colors);
                     if (hazardGrid != null)
-                        DrawToTilemap(3, hazardTilemap, hazardGrid, 5);
+                        DrawToTilemap(3, hazardTilemap, hazardGrid, MapGen.MapGrid[y][x].region, false);
                     if (entityGrid != null)
-                        DrawToTilemap(4, entityTilemap, entityGrid, 5);
-
-                    // move the player to the starting room
-                    player.transform.localPosition = new Vector3(px + 6, FlipPY(py) + 4, 0);
+                        DrawToTilemap(4, entityTilemap, entityGrid, MapGen.MapGrid[y][x].region, false);
                 }
             }
         }
@@ -238,6 +265,9 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
         foreach (List<MapTile> room in MapGen.MapRooms)
         {
             if (room.Count == 0)
+                continue;
+
+            if (room[0].name != null)
                 continue;
 
             int min_x = room[0].position.x;
@@ -328,19 +358,18 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
                     
                     // draw the tiles to this room for each included layer (some layouts like Base are missing some layers)
                     if (fgGrid != null)
-                        DrawToTilemap(1, fgTilemap, fgGrid, region);
+                        DrawToTilemap(1, fgTilemap, fgGrid, region, true);
                     if (bgGrid != null)
-                        DrawToTilemap(2, bgTilemap, bgGrid, region);
+                        DrawToTilemap(2, bgTilemap, bgGrid, region, true);
                     if (hazardGrid != null)
-                        DrawToTilemap(3, hazardTilemap, hazardGrid, region);
+                        DrawToTilemap(3, hazardTilemap, hazardGrid, region, false);
                     if (entityGrid != null)
-                        DrawToTilemap(4, entityTilemap, entityGrid, region);
+                        DrawToTilemap(4, entityTilemap, entityGrid, region, false);
 
                     // create a container to hold the entities for this room
                     GameObject entityContainer = new GameObject($"EntityContainer");
                     entityContainer.transform.SetParent(roomObject.transform, false);
                     fg.layer = LayerMask.NameToLayer("Ground"); // make sure to set the layer so the player properly interacts with ground
-
 
                     // spawn entities for the entity grid
                     if (entityGrid != null)
@@ -393,7 +422,7 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
                 {
                     // layer up_door tiles to carve door on top wall of the room
                     List<List<int>> grid = CsvUtility.LoadGridFromCSV("Data/World/up_door.csv");
-                    DrawToTilemap(1, fgTilemap, grid, region);
+                    DrawToTilemap(1, fgTilemap, grid, region, false);
 
                     // create a door facing down
                     Instantiate(door, new Vector3(roomObject.transform.position.x + 16, roomObject.transform.position.y + 18, 0), Quaternion.Euler(0, 0, 90), doorContainer.transform);
@@ -403,7 +432,7 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
                 {
                     // layer down_door tiles to carve door on bottom wall of the room
                     List<List<int>> grid = CsvUtility.LoadGridFromCSV("Data/World/down_door.csv");  
-                    DrawToTilemap(1, fgTilemap, grid, region);
+                    DrawToTilemap(1, fgTilemap, grid, region, false);
 
                     // create a door facing up
                     Instantiate(door, new Vector3(roomObject.transform.position.x + 16, roomObject.transform.position.y, 0), Quaternion.Euler(0, 0, 270), doorContainer.transform);
@@ -413,7 +442,7 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
                 {
                     // layer left_door tiles to carve door on left wall of a room
                     List<List<int>> grid = CsvUtility.LoadGridFromCSV("Data/World/left_door.csv");  
-                    DrawToTilemap(1, fgTilemap, grid, region);
+                    DrawToTilemap(1, fgTilemap, grid, region, false);
 
                     // create a door facing right
                     Instantiate(door, new Vector3(roomObject.transform.position.x, roomObject.transform.position.y + 9, 0), Quaternion.Euler(0, 0, 180), doorContainer.transform);
@@ -423,7 +452,7 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
                 {
                     // layer right_door tiles to carve door on right wall of a room
                     List<List<int>> grid = CsvUtility.LoadGridFromCSV("Data/World/right_door.csv");  
-                    DrawToTilemap(1, fgTilemap, grid, region);
+                    DrawToTilemap(1, fgTilemap, grid, region, false);
                     
                     // create a door facing left
                     Instantiate(door, new Vector3(roomObject.transform.position.x + 32, roomObject.transform.position.y + 9, 0), Quaternion.identity, doorContainer.transform);
@@ -432,7 +461,7 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
         }
     }
 
-    private void DrawToTilemap(int layer, Tilemap tilemap, List<List<int>> grid, int region)
+    private void DrawToTilemap(int layer, Tilemap tilemap, List<List<int>> grid, int region, bool colored)
     {
         Tile[] currentTiles = fgTiles;
         switch (layer)
@@ -469,7 +498,7 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
                 }
 
                 // pick a random color for this tile of its region
-                if (layer < 3)
+                if (colored)
                 {
                     Color randColor = currentColors[UnityEngine.Random.Range(0, currentColors.Length)];
                     tilemap.SetTileFlags(new Vector3Int(gx, gy, 0), TileFlags.None);

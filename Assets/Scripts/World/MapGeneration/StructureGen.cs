@@ -17,17 +17,7 @@ public static class StructureGen
         for (int region = 1; region <= 4; region++)
         {
             HashSet<Vector2Int> regionTiles = MapGenUtility.GetTiles(MapGen.RegionGrid, region);
-            Vector2Int seed;
-
-            if (region == 1)
-            {
-                seed = MapGenUtility.GetStartLocation();
-                structureGrid[seed.y][seed.x] = 5;                
-            }
-            else
-            {
-                seed = regionTiles.ElementAt(UnityEngine.Random.Range(0, regionTiles.Count));
-            }
+            Vector2Int seed = regionTiles.ElementAt(UnityEngine.Random.Range(0, regionTiles.Count));
 
             // go through random order in list of algorithms until one works
             bool success = false;

@@ -61,9 +61,6 @@ public static class MapGen
     // dimensions of map grid, square
     public static int GridSize { get; private set; }
 
-    // coordinates of the room where the player starts
-    public static Vector2Int StartRoom { get; private set; }
-
     // used to divide map into different regions to set bounds for generation
     public static List<List<int>> RegionGrid { get; private set; }
 
@@ -96,7 +93,6 @@ public static class MapGen
     private static void CreateRegions()
     {
         RegionGrid = RegionGen.CreateRegions();
-        StartRoom = RegionGen.GetStartPoint();
     }
 
     private static void CreateStructures()

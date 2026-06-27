@@ -762,6 +762,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 9aa49e5ab86ab0945acab56b9bbed8d3, type: 2}
   - {fileID: 11400000, guid: 02f3750d11b30114c9f8ac3e3b736b9e, type: 2}
   - {fileID: 11400000, guid: 65b0277d7e262a648be2ebff0fd6a06a, type: 2}
+  - {fileID: 11400000, guid: 291989861188fc244bd9e7e723939053, type: 2}
+  - {fileID: 11400000, guid: a6363ef27c525774eba6ac34bf039aa4, type: 2}
+  - {fileID: 11400000, guid: 318d0f174d6e1a14cac35507ff781277, type: 2}
   r2Tiles:
   - {fileID: 11400000, guid: ec537d2647dec9c429d258e172805d6c, type: 2}
   - {fileID: 11400000, guid: 6026926426a0e754e8ffece402783e42, type: 2}
@@ -779,6 +782,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 9fdcdaa545eacde4a9cafebbbf372338, type: 2}
   - {fileID: 11400000, guid: 4f83ab939fdce0943918226b590b51d0, type: 2}
   - {fileID: 11400000, guid: 575b6877a7229354bb45c2115149ff15, type: 2}
+  - {fileID: 11400000, guid: 418beb944aa1d3a4c9591991c3b48dd9, type: 2}
+  - {fileID: 11400000, guid: 92d1a32bf48b3cc46af014a7a176d0d9, type: 2}
+  - {fileID: 11400000, guid: 2965389c40795aa459b5a7dbf87a3565, type: 2}
   r3Tiles:
   - {fileID: 11400000, guid: e68cea987c7d8154581eaf271ef973e3, type: 2}
   - {fileID: 11400000, guid: 0c76317365e501d47ac70b2fec029b4e, type: 2}
@@ -796,6 +802,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 84737299b4f248f4ea77ccd4d26aff47, type: 2}
   - {fileID: 11400000, guid: d6b9f6aa6f1c9e345b4c8409301b94ae, type: 2}
   - {fileID: 11400000, guid: 80c768abb1c01d546afc11d34f5d63c5, type: 2}
+  - {fileID: 11400000, guid: 1828b4e2febe27041b53d17004f861b8, type: 2}
+  - {fileID: 11400000, guid: 0210d3aab8bb1094b8a4e420c6f392d6, type: 2}
+  - {fileID: 11400000, guid: a7090f4813e6ad74181f1ba6f2ca6f7e, type: 2}
   r4Tiles:
   - {fileID: 11400000, guid: 63a70c9aff234f244b1cb535d192cc99, type: 2}
   - {fileID: 11400000, guid: 0cea4712a71ef444fa15828b44a064e6, type: 2}
@@ -813,6 +822,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6fad84187d429624bbd82177ff36d97b, type: 2}
   - {fileID: 11400000, guid: 0bda0b93f4c363a439515db2aea3d1a0, type: 2}
   - {fileID: 11400000, guid: def30d950474c7c44b7f8bcfadfd74e8, type: 2}
+  - {fileID: 11400000, guid: 8f6416cfebd33e84a88677f10edb6151, type: 2}
+  - {fileID: 11400000, guid: 71d155a6f54a4c84c8406d40c8289bb5, type: 2}
+  - {fileID: 11400000, guid: 8833c5a61d65a1f4baf1c813ee28298d, type: 2}
   doorsTilemap: {fileID: 1834370845}
   doorTiles:
   - {fileID: 11400000, guid: 6cc75aca56492d1418a6647968d78295, type: 2}

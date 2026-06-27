@@ -94,10 +94,6 @@ public static class CarveDoors
             ConnectDisconnectedRoomGroups(grid, RoomGen.GetRooms(), region);
         }
 
-        // connect region 5 to 1, making a door out of the start room
-        List<int[]> region5ConnectsRegion1 = FindAdjacentMapTiles(grid, 5, 1);
-        ConnectRegions(grid, region5ConnectsRegion1[UnityEngine.Random.Range(0, region5ConnectsRegion1.Count)]);
-
         // connect region 2 with 1 at one of their touching points
         List<int[]> region2ConnectsRegion1 = FindAdjacentMapTiles(grid, 2, 1);
         ConnectRegions(grid, region2ConnectsRegion1[UnityEngine.Random.Range(0, region2ConnectsRegion1.Count)]);

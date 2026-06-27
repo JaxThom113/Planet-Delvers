@@ -128,18 +128,4 @@ public static class MapGenUtility
         // if no tiles touch, regions are not adjacent
         return false;
     }
-
-    public static Vector2Int GetStartLocation()
-    {
-        for (int x = 0; x < GridSize; x++)
-        {
-            for (int y = 0; y < GridSize; y++)
-            {
-                if (MapGen.RegionGrid[y][x] == 5)
-                    return new Vector2Int(x, y);
-            }
-        }
-
-        return new Vector2Int(0, 0);
-    }
 }

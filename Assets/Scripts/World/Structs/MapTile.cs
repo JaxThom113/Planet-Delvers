@@ -2,13 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public struct MapTile
+public class MapTile
 {
     public Vector2Int position;
     public int region;
     public bool visited;
     public bool[] doors; // { up, down, left, right }
     public bool[] connections; // { up, down, left, right }
+    public string name;
 
     public void SetPosition(Vector2Int position)
     {
@@ -33,5 +34,10 @@ public struct MapTile
     public void SetConnections(bool[] connections)
     {
         this.connections = connections;
+    }
+
+    public void SetName(string name)
+    {
+        this.name = name;
     }
 }
