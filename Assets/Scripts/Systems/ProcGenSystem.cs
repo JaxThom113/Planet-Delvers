@@ -42,7 +42,8 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
     void Start()
     {   
         // set the seed
-        UnityEngine.Random.InitState(GameSystem.Instance.seed); 
+        // UnityEngine.Random.InitState(GameSystem.Instance.seed); 
+        UnityEngine.Random.InitState(Environment.TickCount); 
 
         // first generate the world map
         MapGen.GenerateMap(gridSizes[GameSystem.Instance.length]);
@@ -56,7 +57,7 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
         // Step #1: Fill in the minimap to help guide the camera
         SetupMap();
 
-        // Step #2: Create tilmaps for each room and build out the game world
+        // Step #2: Create tilemaps for each room and build out the game world
         SetupWorld();
     }
 
@@ -257,6 +258,40 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
                         DrawToTilemap(3, hazardTilemap, hazardGrid, MapGen.MapGrid[y][x].region, false);
                     if (entityGrid != null)
                         DrawToTilemap(4, entityTilemap, entityGrid, MapGen.MapGrid[y][x].region, false);
+
+                    // make sure to process fg tilemap changes 
+                    fgCollider.ProcessTilemapChanges();
+                    Physics2D.SyncTransforms();
+
+                    // create a container to hold the entities for this room
+                    GameObject entityContainer = new GameObject($"EntityContainer");
+                    entityContainer.transform.SetParent(roomObject.transform, false);
+
+                    // spawn entities for the entity grid
+                    if (entityGrid != null)
+                    {
+                        for (int ey = 0; ey < 18; ey++)
+                        {
+                            for (int ex = 0; ex < 32; ex++)
+                            {
+                                int tile = entityGrid[17 - ey][ex];
+
+                                GameObject enemy = enemies[0];
+
+                                // get the world position of an entity tile
+                                Vector3 tilePos = entityTilemap.GetCellCenterWorld(new Vector3Int(ex, ey, 0));
+                                switch (tile)
+                                {
+                                    case 1: enemy = Instantiate(enemies[0], tilePos, Quaternion.identity, entityContainer.transform); break; // jumper
+                                    case 2: enemy = Instantiate(enemies[1], tilePos, Quaternion.identity, entityContainer.transform); break; // dropper
+                                    case 3: enemy = Instantiate(enemies[2], tilePos, Quaternion.identity, entityContainer.transform); break; // scuttler
+                                    case 4: enemy = Instantiate(enemies[3], tilePos, Quaternion.identity, entityContainer.transform); break; // drifter
+                                }
+
+                                enemy.layer = LayerMask.NameToLayer("Enemy");
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -366,10 +401,13 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
                     if (entityGrid != null)
                         DrawToTilemap(4, entityTilemap, entityGrid, region, false);
 
+                    // make sure to process fg tilemap changes 
+                    fgCollider.ProcessTilemapChanges();
+                    Physics2D.SyncTransforms();
+
                     // create a container to hold the entities for this room
                     GameObject entityContainer = new GameObject($"EntityContainer");
                     entityContainer.transform.SetParent(roomObject.transform, false);
-                    fg.layer = LayerMask.NameToLayer("Ground"); // make sure to set the layer so the player properly interacts with ground
 
                     // spawn entities for the entity grid
                     if (entityGrid != null)

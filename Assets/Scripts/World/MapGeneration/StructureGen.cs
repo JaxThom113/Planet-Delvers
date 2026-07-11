@@ -23,19 +23,13 @@ public static class StructureGen
             bool success = false;
             while (!success)
             {
-                int randomAlgorithm = UnityEngine.Random.Range(0, 2);
+                int randomAlgorithm = UnityEngine.Random.Range(0, 10);
 
-                switch (randomAlgorithm)
-                {
-                    case 0:
-                        structureGrid = RandomWalk.RandomWalkGenerate(structureGrid, region, seed);
-                        break;
-                    case 1:
-                        structureGrid = Dfs.DfsGenerate(structureGrid, region, seed);
-                        break;
-                    default:
-                        break;
-                }
+                // random walk is more heavily weighted
+                if (randomAlgorithm == 0)
+                    structureGrid = Dfs.DfsGenerate(structureGrid, region, seed);
+                else
+                    structureGrid = RandomWalk.RandomWalkGenerate(structureGrid, region, seed);
 
                 // if structures touch regions in the correct way, count as a success and move on
                 if (StructuresTouchRegions(region))

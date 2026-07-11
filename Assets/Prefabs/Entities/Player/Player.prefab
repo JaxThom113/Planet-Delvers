@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3605161136113575768}
   - component: {fileID: 728906669475337661}
   - component: {fileID: 8942118642676099168}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Hurtbox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -338,7 +338,7 @@ GameObject:
   - component: {fileID: 30303791581397469}
   - component: {fileID: 3344483545786648849}
   - component: {fileID: 3784743315251775349}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -459,7 +459,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6755067044494189484}
   - component: {fileID: 7548647431681698607}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: GroundCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
