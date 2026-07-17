@@ -739,8 +739,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 334136613}
-  seededRun: 0
-  seed: 0
   cameraTilemap: {fileID: 0}
   backgroundTilemap: {fileID: 1492505298}
   bgTile: {fileID: 11400000, guid: e63c691e3be9219439e0073d612bdd4b, type: 2}
@@ -868,6 +866,12 @@ MonoBehaviour:
   - {fileID: 7174081750228906014, guid: 1f3d9569fa51ed345bb70ac337e62f95, type: 3}
   - {fileID: 2209549453257002790, guid: 063ca0547716403438b4ca09803fa0c4, type: 3}
   - {fileID: 5509462662683424378, guid: e6bd472400c2de144bc88873fd0a8fe9, type: 3}
+  bosses:
+  - {fileID: 5509462662683424378, guid: 7a13191c9b67cec4b8bd4df1c568fd68, type: 3}
+  - {fileID: 5509462662683424378, guid: 6404279ad5164e14f801d19368c6989b, type: 3}
+  items:
+  - {fileID: 8449996399671599981, guid: 0aba2947a7876724fa62aced7847e98f, type: 3}
+  - {fileID: 8449996399671599981, guid: 9491e03afbfec0d41ac451fa2210a148, type: 3}
   door: {fileID: 6260659814688511312, guid: 3335b8ef9ef0ccd4c9dbdfcf38711162, type: 3}
 --- !u!1 &334136613 stripped
 GameObject:

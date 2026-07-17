@@ -10,10 +10,6 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
     [Header("Player")]
     [SerializeField] private GameObject player;
 
-    [Header("Seed")]
-    [SerializeField] private bool seededRun;
-    [SerializeField] private int seed;
-
     [Header("Map Generation")]
     [SerializeField] private Tilemap cameraTilemap; // hidden map used to guide the camera correctly
     [SerializeField] private Tilemap backgroundTilemap;
@@ -35,6 +31,8 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
 
     [Header("Entity Generation")]
     [SerializeField] private GameObject[] enemies;
+    [SerializeField] private GameObject[] bosses;
+    [SerializeField] private GameObject[] items;
     [SerializeField] private GameObject door;
 
     private readonly int[] gridSizes = { 16, 24, 32 };
@@ -42,8 +40,9 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
     void Start()
     {   
         // set the seed
-        // UnityEngine.Random.InitState(GameSystem.Instance.seed); 
-        UnityEngine.Random.InitState(Environment.TickCount); 
+        UnityEngine.Random.InitState(GameSystem.Instance.seed); 
+        if (GameSystem.Instance.seed == 0)
+            UnityEngine.Random.InitState(Environment.TickCount); 
 
         // first generate the world map
         MapGen.GenerateMap(gridSizes[GameSystem.Instance.length]);
@@ -275,23 +274,37 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
                             for (int ex = 0; ex < 32; ex++)
                             {
                                 int tile = entityGrid[17 - ey][ex];
-
-                                GameObject enemy = enemies[0];
-
-                                // get the world position of an entity tile
+                                if (tile == 0)
+                                    continue;
+                                
                                 Vector3 tilePos = entityTilemap.GetCellCenterWorld(new Vector3Int(ex, ey, 0));
-                                switch (tile)
-                                {
-                                    case 1: enemy = Instantiate(enemies[0], tilePos, Quaternion.identity, entityContainer.transform); break; // jumper
-                                    case 2: enemy = Instantiate(enemies[1], tilePos, Quaternion.identity, entityContainer.transform); break; // dropper
-                                    case 3: enemy = Instantiate(enemies[2], tilePos, Quaternion.identity, entityContainer.transform); break; // scuttler
-                                    case 4: enemy = Instantiate(enemies[3], tilePos, Quaternion.identity, entityContainer.transform); break; // drifter
-                                }
 
-                                enemy.layer = LayerMask.NameToLayer("Enemy");
+                                GameObject newEntity;
+                                int entityIndex = tile - 1;
+
+                                if (tile > 32)
+                                {
+                                    // items
+                                    entityIndex -= 32;
+                                    newEntity = Instantiate(items[entityIndex], tilePos, Quaternion.identity, entityContainer.transform);
+                                }
+                                else if (tile > 16)
+                                {
+                                    // bosses
+                                    entityIndex -= 16;
+                                    newEntity = Instantiate(bosses[entityIndex], tilePos, Quaternion.identity, entityContainer.transform);
+                                }
+                                else
+                                {
+                                    // enemies
+                                    newEntity = Instantiate(enemies[entityIndex], tilePos, Quaternion.identity, entityContainer.transform);
+                                }
+                                
+                                newEntity.layer = LayerMask.NameToLayer("Enemy");
                             }
-                        }
+                        }   
                     }
+
                 }
             }
         }
@@ -417,20 +430,33 @@ public class ProcGenSystem : Singleton<ProcGenSystem>
                             for (int ex = 0; ex < 32; ex++)
                             {
                                 int tile = entityGrid[17 - ey][ex];
+                                if (tile == 0)
+                                    continue;
 
-                                GameObject enemy = enemies[0];
-
-                                // get the world position of an entity tile
                                 Vector3 tilePos = entityTilemap.GetCellCenterWorld(new Vector3Int(ex, ey, 0));
-                                switch (tile)
-                                {
-                                    case 1: enemy = Instantiate(enemies[0], tilePos, Quaternion.identity, entityContainer.transform); break; // jumper
-                                    case 2: enemy = Instantiate(enemies[1], tilePos, Quaternion.identity, entityContainer.transform); break; // dropper
-                                    case 3: enemy = Instantiate(enemies[2], tilePos, Quaternion.identity, entityContainer.transform); break; // scuttler
-                                    case 4: enemy = Instantiate(enemies[3], tilePos, Quaternion.identity, entityContainer.transform); break; // drifter
-                                }
 
-                                enemy.layer = LayerMask.NameToLayer("Enemy");
+                                GameObject newEntity;
+                                int entityIndex = tile - 1;
+
+                                if (tile > 32)
+                                {
+                                    // items
+                                    entityIndex -= 32;
+                                    newEntity = Instantiate(items[entityIndex], tilePos, Quaternion.identity, entityContainer.transform);
+                                }
+                                else if (tile > 16)
+                                {
+                                    // bosses
+                                    entityIndex -= 16;
+                                    newEntity = Instantiate(bosses[entityIndex], tilePos, Quaternion.identity, entityContainer.transform);
+                                }
+                                else
+                                {
+                                    // enemies
+                                    newEntity = Instantiate(enemies[entityIndex], tilePos, Quaternion.identity, entityContainer.transform);
+                                }
+                                
+                                newEntity.layer = LayerMask.NameToLayer("Enemy");
                             }
                         }
                     }
