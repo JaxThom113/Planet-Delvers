@@ -21,7 +21,7 @@ public class MapCamera : MonoBehaviour
     void Update()
     {
         // if inventory menu open and on map tab, allow movement
-        if (inventoryMenu.mapTab.activeSelf)
+        if (inventoryMenu.gameObject.activeSelf && inventoryMenu.mapTab.activeSelf)
         {
             Vector3 cameraPos = transform.position;
 

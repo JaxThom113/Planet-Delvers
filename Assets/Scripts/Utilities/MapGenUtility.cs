@@ -44,6 +44,36 @@ public static class MapGenUtility
         return grid;
     }
 
+    public static List<List<int>> InitializeIntGrid(int dimX, int dimY)
+    {
+        List<List<int>> grid = new List<List<int>>();
+        for (int y = 0; y < dimY; y++)
+        {
+            grid.Add(new List<int>());
+            for (int x = 0; x < dimX; x++)
+            {
+                grid[y].Add(0);
+            }
+        }
+
+        return grid;
+    }
+
+    public static List<List<float>> InitializeFloatGrid(int dimX, int dimY)
+    {
+        List<List<float>> grid = new List<List<float>>();
+        for (int y = 0; y < dimY; y++)
+        {
+            grid.Add(new List<float>());
+            for (int x = 0; x < dimX; x++)
+            {
+                grid[y].Add(0f);
+            }
+        }
+
+        return grid;
+    }
+
     public static List<List<MapTile>> InitializeMapTileGrid()
     {
         List<List<MapTile>> grid = new List<List<MapTile>>();
