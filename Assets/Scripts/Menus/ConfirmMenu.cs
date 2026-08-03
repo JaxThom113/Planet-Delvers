@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class ConfirmMenu : MonoBehaviour
+public class ConfirmMenu : Menu
 {
     private string destination;
 
@@ -28,6 +28,6 @@ public class ConfirmMenu : MonoBehaviour
 
     public void OnNoClicked()
     {
-        gameObject.SetActive(false);
+        CloseMenu();
     }
 }

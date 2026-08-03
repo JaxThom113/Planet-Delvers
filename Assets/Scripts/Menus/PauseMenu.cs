@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PauseMenu : MonoBehaviour
+public class PauseMenu : Menu
 {
     [Header("Menu References")]
     [SerializeField] private OptionsMenu optionsMenu;
+    [SerializeField] private InventoryMenu inventoryMenu;
     [SerializeField] private HelpMenu helpMenu;
     [SerializeField] private ConfirmMenu confirmMenu;
 
@@ -15,12 +16,17 @@ public class PauseMenu : MonoBehaviour
     */
     public void OnPause(InputAction.CallbackContext context)
     {
-        if (gameObject.activeSelf)
+        bool noOtherMenusOpen = !optionsMenu.gameObject.activeSelf
+            && !inventoryMenu.gameObject.activeSelf
+            && !helpMenu.gameObject.activeSelf
+            && !confirmMenu.gameObject.activeSelf;
+        
+        if (gameObject.activeSelf && noOtherMenusOpen)
         {
             gameObject.SetActive(false);
             Time.timeScale = 1;
         }
-        else
+        else if (!inventoryMenu.gameObject.activeSelf)
         {
             gameObject.SetActive(true);
             Time.timeScale = 0;
@@ -31,8 +37,8 @@ public class PauseMenu : MonoBehaviour
         Pause menu buttons
     */
     public void OnResumeClicked()
-    {
-        gameObject.SetActive(false);
+    {        
+        CloseMenu();
         Time.timeScale = 1;
     }
 

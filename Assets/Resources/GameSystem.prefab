@@ -45,5 +45,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   seed: 0
-  length: 0
-  level: 0
+  size: 1
+  level: 1

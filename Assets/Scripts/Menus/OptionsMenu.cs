@@ -2,13 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class OptionsMenu : MonoBehaviour
+public class OptionsMenu : Menu
 {
     /*
         Options menu buttons
     */
     public void OnBackClicked()
     {
-        gameObject.SetActive(false);
+        CloseMenu();
     }
 }

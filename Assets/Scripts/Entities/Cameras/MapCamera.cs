@@ -12,6 +12,7 @@ public class MapCamera : MonoBehaviour
 	[SerializeField] private float movementSpeed;
 
 	private Vector2 movementInput = Vector2.zero;
+    public Vector3 cameraPos;
 
     public void OnMove(InputAction.CallbackContext context)
     {
@@ -23,7 +24,7 @@ public class MapCamera : MonoBehaviour
         // if inventory menu open and on map tab, allow movement
         if (inventoryMenu.gameObject.activeSelf && inventoryMenu.mapTab.activeSelf)
         {
-            Vector3 cameraPos = transform.position;
+            cameraPos = transform.position;
 
             // use unscaled delta time to allow movement while paused
             cameraPos.y += movementSpeed * movementInput.y * Time.unscaledDeltaTime;

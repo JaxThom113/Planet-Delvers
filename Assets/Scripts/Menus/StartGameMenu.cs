@@ -6,40 +6,53 @@ using UnityEngine.SceneManagement;
 using TMPro;
 using System;
 
-public class StartGameMenu : MonoBehaviour
+public class StartGameMenu : Menu
 {
     [Header("Menu References")]
     [SerializeField] private HelpMenu helpMenu;
 
-    [Header("Mission Length")]
-    [SerializeField] private Toggle shortLengthToggle;
-    [SerializeField] private Toggle mediumLengthToggle;
-    [SerializeField] private Toggle longLengthToggle;
+    [Header("Mission Displays")]
+    [SerializeField] private List<GameObject> displays;
+
+    [Header("Mission Size")]
+    [SerializeField] private Toggle smallSizeToggle;
+    [SerializeField] private Toggle normalSizeToggle;
+    [SerializeField] private Toggle largeSizeToggle;
+    [SerializeField] private TextMeshProUGUI sizeDescription;
 
     [Header("Mission Level")]
     [SerializeField] private Toggle easyLevelToggle;
     [SerializeField] private Toggle mediumLevelToggle;
     [SerializeField] private Toggle hardLevelToggle;
+    [SerializeField] private TextMeshProUGUI levelDescription;
 
     [Header("Seed")]
     [SerializeField] private Toggle seedToggle;
     [SerializeField] private TMP_InputField seedInputField;
 
-    private int length;
+    private int size;
     private int level;
     private int seed;
+
+    private int displayIndex;
+    private int sizeOffset;
+    private int levelOffset;
 
     private bool isSeededRun;
     private bool validSeed;
 
     void OnEnable()
     {
-        HandleLengthColors();
+        HandleSizeColors();
         HandleLevelColors();
 
-        length = 0;
-        level = 0;
+        size = 1;
+        level = 1;
         seed = 0;
+
+        displayIndex = 4;
+        sizeOffset = 3;
+        levelOffset = 1;
 
         isSeededRun = false;
     }
@@ -49,7 +62,7 @@ public class StartGameMenu : MonoBehaviour
     */
     public void OnBackClicked()
     {
-        gameObject.SetActive(false);
+        CloseMenu();
     }
 
     public void OnLaunchClicked()
@@ -71,7 +84,7 @@ public class StartGameMenu : MonoBehaviour
             GameSystem.Instance.seed = Environment.TickCount;
         }
 
-        GameSystem.Instance.length = length;
+        GameSystem.Instance.size = size;
         GameSystem.Instance.level = level;
 
         SceneManager.LoadScene("Overworld");
@@ -82,54 +95,78 @@ public class StartGameMenu : MonoBehaviour
         helpMenu.gameObject.SetActive(true);
     }
 
-    public void OnShortLengthToggleChanged()
+    public void OnSmallSizeToggleChanged()
     {
-        HandleLengthColors();
-        length = 0;
+        HandleSizeColors();
+        sizeDescription.text = "Smaller world to get in & out quickly. 8x8 world, 10 min playtime.";
+        size = 0;
+
+        sizeOffset = 0;
+        UpdateDisplay();
     }
 
-    public void OnMediumLengthToggleChanged()
+    public void OnNormalSizeToggleChanged()
     {
-        HandleLengthColors();
-        length = 1;
+        HandleSizeColors();
+        sizeDescription.text = "Intended experience. 16x16 world, 20 min playtime.";
+        size = 1;
+
+        sizeOffset = 3;
+        UpdateDisplay();
     }
 
-    public void OnLongLengthToggleChanged()
+    public void OnLargeSizeToggleChanged()
     {
-        HandleLengthColors();
-        length = 2;
+        HandleSizeColors();
+        sizeDescription.text = "Large world for veteran delvers. 24x24 world, 40 min playtime.";
+        size = 2;
+
+        sizeOffset = 6;
+        UpdateDisplay();
     }
     
-    private void HandleLengthColors()
+    private void HandleSizeColors()
     {
-        shortLengthToggle.GetComponentInChildren<TextMeshProUGUI>().color = Color.white;
-        mediumLengthToggle.GetComponentInChildren<TextMeshProUGUI>().color = Color.white;
-        longLengthToggle.GetComponentInChildren<TextMeshProUGUI>().color = Color.white;
+        smallSizeToggle.GetComponentInChildren<TextMeshProUGUI>().color = Color.white;
+        normalSizeToggle.GetComponentInChildren<TextMeshProUGUI>().color = Color.white;
+        largeSizeToggle.GetComponentInChildren<TextMeshProUGUI>().color = Color.white;
 
-        if(shortLengthToggle.isOn)
-            shortLengthToggle.GetComponentInChildren<TextMeshProUGUI>().color = Color.black;
-        else if (mediumLengthToggle.isOn)
-            mediumLengthToggle.GetComponentInChildren<TextMeshProUGUI>().color = Color.black;
-        else if (longLengthToggle.isOn)
-            longLengthToggle.GetComponentInChildren<TextMeshProUGUI>().color = Color.black;
+        if(smallSizeToggle.isOn)
+            smallSizeToggle.GetComponentInChildren<TextMeshProUGUI>().color = Color.black;
+        else if (normalSizeToggle.isOn)
+            normalSizeToggle.GetComponentInChildren<TextMeshProUGUI>().color = Color.black;
+        else if (largeSizeToggle.isOn)
+            largeSizeToggle.GetComponentInChildren<TextMeshProUGUI>().color = Color.black;
     }
 
     public void OnEasyLevelToggleChanged()
     {
         HandleLevelColors();
+        levelDescription.text = "Low-intensity option. Eneimes deal half damage, bosses are less deadly.";
         level = 0;
+
+        levelOffset = 0;
+        UpdateDisplay();
     }
 
     public void OnMediumLevelToggleChanged()
     {
         HandleLevelColors();
+        levelDescription.text = "Intended experience. Enemies deal moderate damage, bosses are fair.";
         level = 1;
+
+        levelOffset = 1;
+        UpdateDisplay();
     }
 
     public void OnHardLevelToggleChanged()
     {
         HandleLevelColors();
+        levelDescription.text = "For the most skilled delvers. Enemies deal double damage, bosses are punishing.";
         level = 2;
+
+        levelOffset = 2;
+        UpdateDisplay();
     }
 
     private void HandleLevelColors()
@@ -173,5 +210,19 @@ public class StartGameMenu : MonoBehaviour
         //     GameData.SpecialSeed = seedInputField.text;
         //     validSeed = true;
         // }
+    }
+
+    public void UpdateDisplay()
+    {
+        Debug.Log(displayIndex);
+        displayIndex = sizeOffset + levelOffset;
+
+        foreach (GameObject display in displays)
+            display.SetActive(false);
+
+        if (displayIndex >= displays.Count)
+            return;
+
+        displays[displayIndex].SetActive(true);
     }
 }

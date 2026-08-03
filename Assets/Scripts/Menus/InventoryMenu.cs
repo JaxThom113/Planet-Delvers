@@ -5,19 +5,40 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using TMPro;
 
-public class InventoryMenu : MonoBehaviour
+public class InventoryMenu : Menu
 {
-    [Header("Menu Tabs")]
+    [Header("Menu References")]
+    [SerializeField] private PauseMenu pauseMenu;
+
+    [Header("Inventory Tab")]
     [SerializeField] private Toggle inventoryToggle;
-    [SerializeField] private Toggle mapToggle;
-    [SerializeField] private Toggle statsToggle;
     [SerializeField] public GameObject inventoryTab;
+    [SerializeField] private GameObject playerImage;
+
+    [Header("Map Tab")]
+    [SerializeField] private Toggle mapToggle;
     [SerializeField] public GameObject mapTab;
+    [SerializeField] private MapCamera mapCamera;
+    [SerializeField] private TextMeshProUGUI coordinates;
+
+    [Header("Stats Tab")]
+    [SerializeField] private Toggle statsToggle;
     [SerializeField] public GameObject statsTab;
+    [SerializeField] private TextMeshProUGUI time;
+    [SerializeField] private TextMeshProUGUI seed;
+    [SerializeField] private TextMeshProUGUI size;
+    [SerializeField] private TextMeshProUGUI level;
 
     void OnEnable()
     {
         HandleColors();
+        UpdateStats();
+    }
+
+    void Update()
+    {
+        UpdateMap();
+        UpdateClock();
     }
 
     /*
@@ -48,7 +69,7 @@ public class InventoryMenu : MonoBehaviour
             gameObject.SetActive(false);
             Time.timeScale = 1;
         }
-        else
+        else if (!pauseMenu.gameObject.activeSelf)
         {
             gameObject.SetActive(true);
             Time.timeScale = 0;
@@ -78,7 +99,8 @@ public class InventoryMenu : MonoBehaviour
     
     public void OnExitClicked()
     {
-        ToggleMenu();
+        CloseMenu();
+        Time.timeScale = 1;
     }
 
     private void ShowTab(GameObject tabToShow)
@@ -111,8 +133,63 @@ public class InventoryMenu : MonoBehaviour
     /*
         Map tab
     */
+    private void UpdateMap()
+    {
+        // update coordinates to current position of map camera
+        coordinates.text = $"({mapCamera.cameraPos.x:F2}, {mapCamera.cameraPos.y:F2})"; 
+    }
 
     /*
         Stats tab
     */
+    private void UpdateStats()
+    {
+        // update current seed display
+        seed.text = GameSystem.Instance.seed.ToString();
+
+        // update world size
+        switch (GameSystem.Instance.size)
+        {
+            case 0: 
+                size.text = "Small";
+                size.color = new Color32(76, 255, 0, 255);
+                break;
+            case 1: 
+                size.text = "Normal";
+                size.color = new Color32(0, 148, 255, 255);
+                break;
+            case 2: 
+                size.text = "Large";
+                size.color = new Color32(255, 0, 0, 255);
+                break;
+        }
+
+        // update game difficulty level
+        switch (GameSystem.Instance.level)
+        {
+            case 0: 
+                level.text = "Easy";
+                level.color = new Color32(76, 255, 0, 255);
+                break;
+            case 1: 
+                level.text = "Medium";
+                level.color = new Color32(0, 148, 255, 255);
+                break;
+            case 2: 
+                level.text = "Hard";
+                level.color = new Color32(255, 0, 0, 255);
+                break;
+        }
+    }
+
+    private void UpdateClock()
+    {
+        float elaspedTime = Time.timeSinceLevelLoad;
+
+        int hours = Mathf.FloorToInt(elaspedTime / 3600);
+        int minutes = Mathf.FloorToInt((elaspedTime % 3600) / 60);
+        int seconds = Mathf.FloorToInt(elaspedTime % 60);
+
+        time.text = $"{hours:00}:{minutes:00}:{seconds:00}";
+    }
 }
