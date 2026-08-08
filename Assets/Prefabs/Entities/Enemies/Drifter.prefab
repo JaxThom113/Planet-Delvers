@@ -85,7 +85,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: e1d14cbfd75fc6248a26535aa8ba1d5a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -106,7 +106,7 @@ SpriteRenderer:
   m_SortingLayerID: 1077690197
   m_SortingLayer: -1
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 7105bcae6663dc843a128ecad8622434, type: 3}
+  m_Sprite: {fileID: -724496545, guid: d87b3a08e76638a42ac5ce318322195c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -350,6 +350,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b542c5b661155b840a5ae5597905cf75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemySO: {fileID: 11400000, guid: adaa85974b7605e458542c8a56ca017a, type: 2}
+  sprite: {fileID: 1204426146269599852}
   drifterChecks: {fileID: 5223807350600663857}
   drifterAnimations: {fileID: 3792394527086274686}
   speed: 2

@@ -1330,6 +1330,10 @@ MonoBehaviour:
   items:
   - {fileID: 8449996399671599981, guid: 0aba2947a7876724fa62aced7847e98f, type: 3}
   - {fileID: 8449996399671599981, guid: 9491e03afbfec0d41ac451fa2210a148, type: 3}
+  - {fileID: 8449996399671599981, guid: 8a40409c28a571441a0205081792dcd1, type: 3}
+  - {fileID: 8449996399671599981, guid: c8f89eabb3e9cee4c8da83ef0730d3e7, type: 3}
+  - {fileID: 8449996399671599981, guid: 977c06855b5cec840a0a999d3f686cb8, type: 3}
+  - {fileID: 8449996399671599981, guid: 63fd08148659463479224dbfe3d86f5e, type: 3}
   door: {fileID: 6260659814688511312, guid: 3335b8ef9ef0ccd4c9dbdfcf38711162, type: 3}
   lightingMaterial: {fileID: 2100000, guid: 486ee97d2fbec254eba680ce124aeeac, type: 2}
 --- !u!114 &934837037

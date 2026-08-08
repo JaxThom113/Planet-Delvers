@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Scuttler : MonoBehaviour
+public class Scuttler : Enemy
 {
     [Header("Scuttler Component References")]
     [SerializeField] ScuttlerChecks scuttlerChecks;

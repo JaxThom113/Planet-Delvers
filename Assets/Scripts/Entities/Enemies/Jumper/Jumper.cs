@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Jumper : MonoBehaviour
+public class Jumper : Enemy
 {
     [Header("Jumper Component References")]
     [SerializeField] JumperChecks jumperChecks;

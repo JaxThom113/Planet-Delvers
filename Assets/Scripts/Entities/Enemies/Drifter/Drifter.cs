@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Drifter : MonoBehaviour
+public class Drifter : Enemy
 {
     [Header("Drifter Component References")]
     [SerializeField] DrifterChecks drifterChecks;

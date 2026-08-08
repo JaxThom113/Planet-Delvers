@@ -174,11 +174,13 @@ public class PlayerController : MonoBehaviour
         if (hurtboxCheck.IsHazard)
         {
             // damage and reset the player's position
+            GameSystem.Instance.playerCurrentHealth -= 10;
             StartCoroutine(HazardCollision());
         }
         else if (hurtboxCheck.IsEnemy)
         {
             // damage and knockback the player
+            GameSystem.Instance.playerCurrentHealth -= 5;
             StartCoroutine(EnemyCollision());
         }
     }

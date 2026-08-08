@@ -111,6 +111,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22f5956da8a7c45448ea55dc1e3db2a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemySO: {fileID: 11400000, guid: 438a05dfc6d216c4f8b0b87743cf29ac, type: 2}
+  sprite: {fileID: 3209100211901238420}
   jumperChecks: {fileID: 726118944285458629}
   jumperAnimations: {fileID: 3851854266449841275}
   speed: 5
@@ -428,7 +430,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: e1d14cbfd75fc6248a26535aa8ba1d5a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -449,7 +451,7 @@ SpriteRenderer:
   m_SortingLayerID: 1077690197
   m_SortingLayer: -1
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 22c65555e7200bd48922f07fc6fef26d, type: 3}
+  m_Sprite: {fileID: -2067771848, guid: ff372ee5da451aa4182a5f34be783ecd, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

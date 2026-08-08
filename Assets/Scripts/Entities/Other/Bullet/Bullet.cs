@@ -5,6 +5,7 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
     [SerializeField] private float speed;
+    [SerializeField] public int damage;
 
     private Rigidbody2D rb;
 
@@ -30,7 +31,7 @@ public class Bullet : MonoBehaviour
         if (collision.CompareTag("Enemy"))
         {
             // delete the enemy that was hit
-            Destroy(collision.GetComponentInParent<Rigidbody2D>().gameObject);
+            //Destroy(collision.GetComponentInParent<Rigidbody2D>().gameObject);
             Destroy(gameObject);
         }
     }
