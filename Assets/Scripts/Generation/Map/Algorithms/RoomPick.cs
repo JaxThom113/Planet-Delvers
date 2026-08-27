@@ -30,9 +30,6 @@ public static class RoomPick
     {
         allRooms = new List<List<MapTile>>();
 
-        // string specialRoomsPath = Path.Combine(Application.streamingAssetsPath, "Data/Rooms/Special");
-        // string[] specialRooms = Directory.GetDirectories(specialRoomsPath);
-
         // before making random rooms, add the special rooms (start room, boss rooms, item rooms)
         for (int region = 1; region <= 4; region++)
         {
@@ -61,6 +58,10 @@ public static class RoomPick
             }
 
             // create 1 boss room for this region
+
+            // place it a the point that is furthest away from the start room 
+
+
             rand = Random.Range(0, targetStructureTiles.Count);
             Vector2Int bossLoc = targetStructureTiles.ElementAt(rand);
             targetStructureTiles.Remove(bossLoc);
@@ -75,6 +76,12 @@ public static class RoomPick
             allRooms.Add(bossRoomToAdd);
 
             // create 1 item room for this region
+
+
+            // attempt to place it somewhere where it will only have 1 door attached
+
+
+
             rand = Random.Range(0, targetStructureTiles.Count);
             Vector2Int itemLoc = targetStructureTiles.ElementAt(rand);
             targetStructureTiles.Remove(itemLoc);
@@ -87,12 +94,6 @@ public static class RoomPick
 
             List<MapTile> itemRoomToAdd = new List<MapTile>{ grid[itemLoc.y][itemLoc.x] };
             allRooms.Add(itemRoomToAdd);
-
-            /*
-            
-                add other special rooms if wanted
-
-            */
         }
 
         // create rooms in the remaining space in the structure grid

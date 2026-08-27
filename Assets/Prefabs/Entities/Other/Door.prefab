@@ -256,4 +256,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 426f01676ee71654b8dfbe3382990b20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  smoothingSpeed: 5
+  playerSmoothingSpeed: 8
+  cameraSmoothingSpeed: 5

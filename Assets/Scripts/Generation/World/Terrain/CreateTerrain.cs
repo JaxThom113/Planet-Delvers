@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -64,7 +66,17 @@ public class CreateTerrain : MonoBehaviour
                         colors = false;
                     }
 
-                    string path = $"Data/Rooms/Special/{name}/";
+
+
+                    // spawn boss rooms as far away from the start room as possible
+
+
+
+                    // try to spawn item rooms with only 1 door
+
+
+
+                    string path = $"Data/Special/{name}/";
 
                     // create new room gameobject to store all of a room's cells and their data
                     GameObject roomObject = new GameObject($"Room_{roomIndex}");
@@ -147,51 +159,57 @@ public class CreateTerrain : MonoBehaviour
                         continue;
 
                     GameObject cellObject = roomObject.transform.Find($"Cell_{x}_{y}").gameObject;
+
                     Tilemap fgTilemap = cellObject.transform.Find("Fg").GetComponent<Tilemap>();
+                    Tilemap hazardTilemap = cellObject.transform.Find("Hazard").GetComponent<Tilemap>();
+
                     int region = MapGen.MapGrid[y][x].region;
 
                     // create a container to hold door entities for this room
                     GameObject doorContainer = new GameObject($"Doors");
                     doorContainer.transform.SetParent(cellObject.transform, false);
 
-                    if (MapGen.MapGrid[y][x].doors[0])
+                    for (int i = 0; i < 4; i++)
                     {
-                        // layer up_door tiles to carve door on top wall of the room
-                        List<List<int>> grid = CsvUtility.LoadGridFromCSV("Data/World/up_door.csv");
-                        DrawToTilemap(fgTiles, fgTilemap, grid, region, false);
+                        if (MapGen.MapGrid[y][x].doors[i])
+                        {
+                            string doorName = "";
+                            Vector3 doorPos = new Vector3();
+                            Quaternion doorRot = new Quaternion();;
 
-                        // create a door facing down
-                        Instantiate(door, new Vector3(cellObject.transform.position.x + 16, cellObject.transform.position.y + 18, 0), Quaternion.Euler(0, 0, 90), doorContainer.transform);
-                    }
+                            switch (i)
+                            {
+                                case 0: 
+                                    doorName = "UpDoor"; 
+                                    doorPos = new Vector3(cellObject.transform.position.x + 16, cellObject.transform.position.y + 18, 0);
+                                    doorRot = Quaternion.Euler(0, 0, 90);
+                                    break;
+                                case 1: 
+                                    doorName = "DownDoor"; 
+                                    doorPos = new Vector3(cellObject.transform.position.x + 16, cellObject.transform.position.y, 0);
+                                    doorRot = Quaternion.Euler(0, 0, 270);
+                                    break;
+                                case 2: 
+                                    doorName = "LeftDoor";
+                                    doorPos = new Vector3(cellObject.transform.position.x, cellObject.transform.position.y + 9, 0);
+                                    doorRot = Quaternion.Euler(0, 0, 180);
+                                    break;
+                                case 3: 
+                                    doorName = "RightDoor"; 
+                                    doorPos = new Vector3(cellObject.transform.position.x + 32, cellObject.transform.position.y + 9, 0);
+                                    doorRot = Quaternion.identity;
+                                    break;
+                            }
 
-                    if (MapGen.MapGrid[y][x].doors[1])
-                    {
-                        // layer down_door tiles to carve door on bottom wall of the room
-                        List<List<int>> grid = CsvUtility.LoadGridFromCSV("Data/World/down_door.csv");  
-                        DrawToTilemap(fgTiles, fgTilemap, grid, region, false);
+                            // use door overlay to carve a hole for a door and remove spikes in the way
+                            List<List<int>> fgGrid = CsvUtility.LoadGridFromCSV($"Data/Overlays/{doorName}/Fg/1.csv");
+                            List<List<int>> hazardGrid = CsvUtility.LoadGridFromCSV($"Data/Overlays/{doorName}/Hazard/1.csv");
 
-                        // create a door facing up
-                        Instantiate(door, new Vector3(cellObject.transform.position.x + 16, cellObject.transform.position.y, 0), Quaternion.Euler(0, 0, 270), doorContainer.transform);
-                    }
+                            DrawToTilemap(fgTiles, fgTilemap, fgGrid, region, false);
+                            DrawToTilemap(hazardTiles, hazardTilemap, hazardGrid, region, false);
 
-                    if (MapGen.MapGrid[y][x].doors[2])
-                    {
-                        // layer left_door tiles to carve door on left wall of a room
-                        List<List<int>> grid = CsvUtility.LoadGridFromCSV("Data/World/left_door.csv");  
-                        DrawToTilemap(fgTiles, fgTilemap, grid, region, false);
-
-                        // create a door facing right
-                        Instantiate(door, new Vector3(cellObject.transform.position.x, cellObject.transform.position.y + 9, 0), Quaternion.Euler(0, 0, 180), doorContainer.transform);
-                    }
-
-                    if (MapGen.MapGrid[y][x].doors[3])
-                    {
-                        // layer right_door tiles to carve door on right wall of a room
-                        List<List<int>> grid = CsvUtility.LoadGridFromCSV("Data/World/right_door.csv");  
-                        DrawToTilemap(fgTiles, fgTilemap, grid, region, false);
-                        
-                        // create a door facing left
-                        Instantiate(door, new Vector3(cellObject.transform.position.x + 32, cellObject.transform.position.y + 9, 0), Quaternion.identity, doorContainer.transform);
+                            Instantiate(door, doorPos, doorRot, doorContainer.transform);
+                        }
                     }
                 }
             }
@@ -374,7 +392,7 @@ public class CreateTerrain : MonoBehaviour
 
                 Vector3 tilePos = entityTilemap.GetCellCenterWorld(new Vector3Int(ex, ey, 0));
 
-                GameObject newEntity;
+                GameObject newEntity = new GameObject();
                 int entityIndex = tile - 1;
 
                 switch (tile)
@@ -382,17 +400,28 @@ public class CreateTerrain : MonoBehaviour
                     // items
                     case > 32: 
                         entityIndex -= 32;
+
+                        if (entityIndex >= items.Length)
+                            break;
+                        
                         newEntity = Instantiate(items[entityIndex], tilePos, Quaternion.identity, entityContainer.transform);
                         break;
 
                     // bosses
                     case > 16: 
                         entityIndex -= 16;
+
+                        if (entityIndex >= bosses.Length)
+                            break;
+
                         newEntity = Instantiate(bosses[entityIndex], tilePos, Quaternion.identity, entityContainer.transform);
                         break;
 
                     // enemies
                     default: 
+                        if (entityIndex >= enemies.Length)
+                            break;
+                        
                         newEntity = Instantiate(enemies[entityIndex], tilePos, Quaternion.identity, entityContainer.transform);
                         break;
                 }
