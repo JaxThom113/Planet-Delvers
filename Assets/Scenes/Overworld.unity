@@ -1255,16 +1255,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 334136613}
   worldGrid: {fileID: 1351567846}
-  fgTiles:
-  - {fileID: 11400000, guid: 4f80f261dafc94b4b974fdc6355eb724, type: 2}
-  - {fileID: 11400000, guid: f1d42ec1a270bae4cb4d528db1f7d015, type: 2}
-  - {fileID: 11400000, guid: e2baed0097db57845a293203e6a1a8d8, type: 2}
-  - {fileID: 11400000, guid: 4e9063ab1e47b3c48a5eaeeeb41d8b83, type: 2}
-  bgTiles:
-  - {fileID: 11400000, guid: b8e7d3070d64c4e47857ce7e35fb53d3, type: 2}
-  - {fileID: 11400000, guid: 4ca7c2ed4e5d3614397fa7037e9fe21e, type: 2}
-  - {fileID: 11400000, guid: 2866d35d3e88d2c4d803668cae9b53b2, type: 2}
-  - {fileID: 11400000, guid: 4c112e9f5b6f40442897384bde361165, type: 2}
+  defaultTileset: {fileID: 11400000, guid: 03c042fb02194934ea1bd1f263ebf24d, type: 2}
+  region1Tileset: {fileID: 11400000, guid: ddeeb7ad04ba0174cac580028826685e, type: 2}
+  region2Tileset: {fileID: 11400000, guid: 45e9c0d1d9ce4ac459eda62b058345b5, type: 2}
+  region3Tileset: {fileID: 11400000, guid: fd4917a0caf7d264f95f178e9b84e78a, type: 2}
+  region4Tileset: {fileID: 11400000, guid: 4c7cb57bd47deb246bf2ca0b5e67fa63, type: 2}
   hazardTiles:
   - {fileID: 11400000, guid: e5b348355b95fb24f8e91392ef0c0e6c, type: 2}
   - {fileID: 11400000, guid: f75e7e6ba7efb674fbb6b6eb14e08d8b, type: 2}

@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 698cdc4747d78584e90c9914453da655, type: 3}
+  m_Name: BubblyType3
+  m_EditorClassIdentifier: 
+  tiles:
+  - {fileID: 11400000, guid: 23602fbb005483c47a71a94053903ad9, type: 2}
+  - {fileID: 11400000, guid: 7f0cf699ee902c3479d5525c5fbd858c, type: 2}
+  - {fileID: 11400000, guid: 613cc2c6995c24549afa357100300725, type: 2}
+  - {fileID: 11400000, guid: a7776f806a77d6e49adcb6b6782c4bff, type: 2}
+  colored: 0

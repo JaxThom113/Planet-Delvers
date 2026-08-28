@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -13,8 +11,11 @@ public class CreateTerrain : MonoBehaviour
 
     [Header("Room Generation")]
     [SerializeField] private Grid worldGrid;
-    [SerializeField] private Tile[] fgTiles;
-    [SerializeField] private Tile[] bgTiles;
+    [SerializeField] private TilesetSO defaultTileset;
+    [SerializeField] private TilesetSO region1Tileset;
+    [SerializeField] private TilesetSO region2Tileset;
+    [SerializeField] private TilesetSO region3Tileset;
+    [SerializeField] private TilesetSO region4Tileset;
     [SerializeField] private Tile[] hazardTiles;
     [SerializeField] private Tile[] entityTiles;
 
@@ -65,16 +66,6 @@ public class CreateTerrain : MonoBehaviour
                         player.transform.localPosition = new Vector3(px + 6, FlipPY(py) + 4, 0);
                         colors = false;
                     }
-
-
-
-                    // spawn boss rooms as far away from the start room as possible
-
-
-
-                    // try to spawn item rooms with only 1 door
-
-
 
                     string path = $"Data/Special/{name}/";
 
@@ -205,8 +196,8 @@ public class CreateTerrain : MonoBehaviour
                             List<List<int>> fgGrid = CsvUtility.LoadGridFromCSV($"Data/Overlays/{doorName}/Fg/1.csv");
                             List<List<int>> hazardGrid = CsvUtility.LoadGridFromCSV($"Data/Overlays/{doorName}/Hazard/1.csv");
 
-                            DrawToTilemap(fgTiles, fgTilemap, fgGrid, region, false);
-                            DrawToTilemap(hazardTiles, hazardTilemap, hazardGrid, region, false);
+                            DrawToTilemap(region, fgTilemap, fgGrid, false);
+                            DrawToTilemap(hazardTiles, hazardTilemap, hazardGrid);
 
                             Instantiate(door, doorPos, doorRot, doorContainer.transform);
                         }
@@ -308,7 +299,7 @@ public class CreateTerrain : MonoBehaviour
             bgGrid = CsvUtility.LoadGridFromCSV($"Data/Rooms/1/1/1x1_Base/Bg/1.csv");
         
         // draw to the tilemap
-        DrawToTilemap(bgTiles, bgTilemap, bgGrid, region, color);
+        DrawToTilemap(region, bgTilemap, bgGrid, color);
     }
 
     private void CreateFg(GameObject cellObject, string path, bool color, int region)
@@ -329,7 +320,7 @@ public class CreateTerrain : MonoBehaviour
             fgGrid = CsvUtility.LoadGridFromCSV($"Data/Rooms/1/1/1x1_Base/Fg/1.csv");
         
         // draw to the tilemap
-        DrawToTilemap(fgTiles, fgTilemap, fgGrid, region, color);
+        DrawToTilemap(region, fgTilemap, fgGrid, color);
 
         // make sure to process fg tilemap changes, otherwise collisions will have unexpected behavior
         fgCollider.ProcessTilemapChanges();
@@ -355,7 +346,7 @@ public class CreateTerrain : MonoBehaviour
             hazardGrid = CsvUtility.LoadGridFromCSV($"Data/Rooms/1/1/1x1_Base/Hazard/1.csv");
         
         // draw to the tilemap
-        DrawToTilemap(hazardTiles, hazardTilemap, hazardGrid, region, false);
+        DrawToTilemap(hazardTiles, hazardTilemap, hazardGrid);
     }
 
     private void CreateEntity(GameObject cellObject, string path, int region)
@@ -375,7 +366,7 @@ public class CreateTerrain : MonoBehaviour
             entityGrid = CsvUtility.LoadGridFromCSV($"Data/Rooms/1/1/1x1_Base/Entity/1.csv");
         
         // draw to the tilemap
-        DrawToTilemap(entityTiles, entityTilemap, entityGrid, region, false);
+        DrawToTilemap(entityTiles, entityTilemap, entityGrid);
 
         // create a container to hold the entities for this room
         GameObject entityContainer = new GameObject($"EntityContainer");
@@ -545,7 +536,7 @@ public class CreateTerrain : MonoBehaviour
             bgGrid = CsvUtility.LoadGridFromCSV(path + $"{roomDims.x}x{roomDims.y}_Base/Bg/{index}.csv");
         
         // draw to the tilemap
-        DrawToTilemap(bgTiles, bgTilemap, bgGrid, region, true);
+        DrawToTilemap(region, bgTilemap, bgGrid, true);
     }
 
     private void CreateFg(GameObject cellObject, string path, int layoutNum, int index, Vector2Int roomDims, int region)
@@ -566,7 +557,7 @@ public class CreateTerrain : MonoBehaviour
             fgGrid = CsvUtility.LoadGridFromCSV(path + $"{roomDims.x}x{roomDims.y}_Base/Fg/{index}.csv");
         
         // draw to the tilemap
-        DrawToTilemap(fgTiles, fgTilemap, fgGrid, region, true);
+        DrawToTilemap(region, fgTilemap, fgGrid, true);
 
         // make sure to process fg tilemap changes, otherwise collisions will have unexpected behavior
         fgCollider.ProcessTilemapChanges();
@@ -592,7 +583,7 @@ public class CreateTerrain : MonoBehaviour
             hazardGrid = CsvUtility.LoadGridFromCSV(path + $"{roomDims.x}x{roomDims.y}_Base/Fg/{index}.csv");
         
         // draw to the tilemap
-        DrawToTilemap(hazardTiles, hazardTilemap, hazardGrid, region, false);
+        DrawToTilemap(hazardTiles, hazardTilemap, hazardGrid);
     }
 
     private void CreateEntity(GameObject cellObject, string path, int layoutNum, int index, Vector2Int roomDims, int region)
@@ -612,7 +603,7 @@ public class CreateTerrain : MonoBehaviour
             entityGrid = CsvUtility.LoadGridFromCSV(path + $"{roomDims.x}x{roomDims.y}_Base/Entity/{index}.csv");
         
         // draw to the tilemap
-        DrawToTilemap(entityTiles, entityTilemap, entityGrid, region, false);
+        DrawToTilemap(entityTiles, entityTilemap, entityGrid);
 
         // create a container to hold the entities for this room
         GameObject entityContainer = new GameObject($"EntityContainer");
@@ -661,16 +652,65 @@ public class CreateTerrain : MonoBehaviour
         Helper functions
     */
 
-    private void DrawToTilemap(Tile[] tiles, Tilemap tilemap, List<List<int>> grid, int region, bool colored)
-    {
-        Color[] currentColors = new Color[5]{Color.white, Color.white, Color.white, Color.white, Color.white};
-        switch (region)
+    private void DrawToTilemap(Tile[] tiles, Tilemap tilemap, List<List<int>> grid)
+    {     
+        for (int gy = 0; gy < 18; gy++)
         {
-            case 1: currentColors = r1Colors; break; // blue
-            case 2: currentColors = r2Colors; break; // red
-            case 3: currentColors = r3Colors; break; // orange
-            case 4: currentColors = r4Colors; break; // green
+            for (int gx = 0; gx < 32; gx++)
+            {
+                // flip csv data to display properly
+                int tile = grid[17 - gy][gx];
+                Vector3Int pos = new Vector3Int(gx, gy, 0);
+
+                // skip 0s and remove tiles in the positions of 5s
+                if (tile == 0)
+                {
+                    continue;
+                }
+                else if (tile == 5)
+                {
+                    tilemap.SetTile(pos, null);
+                    continue;
+                }
+
+                // draw this tile according to the number in the grid (1,2,3,4)
+                int tileIndex = tile - 1;
+                tilemap.SetTile(pos, tiles[tileIndex]);
+            }
         }
+    }
+
+    private void DrawToTilemap(int region, Tilemap tilemap, List<List<int>> grid, bool color)
+    {
+        // get current region tileset
+        TilesetSO tileset = defaultTileset;
+        if (color)
+        {
+            switch (region)
+            {
+                case 1: tileset = region1Tileset; break;
+                case 2: tileset = region2Tileset; break;
+                case 3: tileset = region3Tileset;  break;
+                case 4: tileset = region4Tileset;  break;
+            }
+        }
+
+        /*
+            This is a small change
+        */
+
+        TiletypeSO[] tileTypes = new[] 
+        { 
+            tileset.type1Tiles, 
+            tileset.type2Tiles, 
+            tileset.type3Tiles, 
+            tileset.type4Tiles 
+        };
+
+
+        /*
+            Another small change
+        */
         
         for (int gy = 0; gy < 18; gy++)
         {
@@ -678,22 +718,32 @@ public class CreateTerrain : MonoBehaviour
             {
                 // flip csv data to display properly
                 int tile = grid[17 - gy][gx];
-                switch (tile)
+                Vector3Int pos = new Vector3Int(gx, gy, 0);
+
+                if (tile == 0)
                 {
-                    case 0: break;
-                    case 1: tilemap.SetTile(new Vector3Int(gx, gy, 0), tiles[0]); break;
-                    case 2: tilemap.SetTile(new Vector3Int(gx, gy, 0), tiles[1]); break;
-                    case 3: tilemap.SetTile(new Vector3Int(gx, gy, 0), tiles[2]); break;
-                    case 4: tilemap.SetTile(new Vector3Int(gx, gy, 0), tiles[3]); break;
-                    case 5: tilemap.SetTile(new Vector3Int(gx, gy, 0), null); break;
+                    continue;
+                }
+                else if (tile == 5)
+                {
+                    tilemap.SetTile(pos, null);
+                    continue;
                 }
 
-                // pick a random color for this tile of its region
-                if (colored)
+                int randTile = 0;
+                Color32 randColor = new Color32(0, 0, 0, 255);
+
+                // pick a random tile of a specific type in this TilesetSO
+                TiletypeSO tileType = tileTypes[tile - 1];
+                randTile = UnityEngine.Random.Range(0, tileType.tiles.Length);
+                tilemap.SetTile(pos, tileType.tiles[randTile]);
+
+                // apply random colors if indicated in the TiletypeSO
+                if (tileType.colored)
                 {
-                    Color randColor = currentColors[UnityEngine.Random.Range(0, currentColors.Length)];
-                    tilemap.SetTileFlags(new Vector3Int(gx, gy, 0), TileFlags.None);
-                    tilemap.SetColor(new Vector3Int(gx, gy, 0), randColor);
+                    randColor = tileset.colors[UnityEngine.Random.Range(0, tileset.colors.Length)];
+                    tilemap.SetTileFlags(pos, TileFlags.None);
+                    tilemap.SetColor(pos, randColor);
                 }
             }
         }
@@ -703,40 +753,4 @@ public class CreateTerrain : MonoBehaviour
     {
         return ((MapGen.GridSize * 18) - 18) - py;
     }
-
-    private readonly Color[] r1Colors = 
-    {
-        new Color(88f/255f, 184f/255f, 1), // +2 lighter
-        new Color(42f/255f, 165f/255f, 1), // +1 lighter
-        new Color(0, 148f/255f, 1), //  0 base color (blue)
-        new Color(0, 123f/255f, 212f/255f), // -1 darker
-        new Color(0, 100f/255f, 171f/255f), // -2 darker
-    };
-
-    private readonly Color[] r2Colors = 
-    {
-        new Color(1, 80f/255f, 80f/255f), // +2 lighter
-        new Color(1, 40f/255f, 40f/255f), // +1 lighter
-        new Color(1, 0, 0), //  0 base color (red)
-        new Color(207f/255f, 0, 0), // -1 darker
-        new Color(162f/255f, 0, 0), // -2 darker
-    };
-
-    private readonly Color[] r3Colors = 
-    {
-        new Color(1, 152f/255f, 79f/255f), // +2 lighter
-        new Color(1, 130f/255f, 42f/255f), // +1 lighter
-        new Color(1, 106f/255f, 0), //  0 base color (orange)
-        new Color(214f/255f, 89f/255f, 0), // -1 darker
-        new Color(164f/255f, 69f/255f, 0), // -2 darker
-    };
-
-    private readonly Color[] r4Colors = 
-    {
-        new Color(136f/255f, 1, 86f/255f), // +2 lighter
-        new Color(107f/255f, 1, 45f/255f), // +1 lighter
-        new Color(76f/255f, 1, 0), //  0 base color (green)
-        new Color(63f/255f, 210f/255f, 0), // -1 darker
-        new Color(49f/255f, 166f/255f, 0), // -2 darker
-    };
 }

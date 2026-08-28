@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53f0c551ed272c442b3f5b55faf1ce8c, type: 3}
+  m_Name: SandyTileset
+  m_EditorClassIdentifier: 
+  colors:
+  - serializedVersion: 2
+    rgba: 4283406591
+  - serializedVersion: 2
+    rgba: 4280976127
+  - serializedVersion: 2
+    rgba: 4278217471
+  - serializedVersion: 2
+    rgba: 4278213078
+  - serializedVersion: 2
+    rgba: 4278207908
+  type1Tiles: {fileID: 11400000, guid: a8c8a3eba2b42134992a9147662bcdf1, type: 2}
+  type2Tiles: {fileID: 11400000, guid: b22c1aa966eb3fc4792dde54e378f8f0, type: 2}
+  type3Tiles: {fileID: 11400000, guid: 0f6191c2567e87048abf5fe15d762235, type: 2}
+  type4Tiles: {fileID: 11400000, guid: 4259314efbde37445b88bd73da3768fd, type: 2}
