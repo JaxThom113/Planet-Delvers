@@ -695,6 +695,10 @@ public class CreateTerrain : MonoBehaviour
             }
         }
 
+        /*
+            This is a small change
+        */
+
         TiletypeSO[] tileTypes = new[] 
         { 
             tileset.type1Tiles, 
