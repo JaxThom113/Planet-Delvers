@@ -671,6 +671,10 @@ public class CreateTerrain : MonoBehaviour
             case 3: currentColors = r3Colors; break; // orange
             case 4: currentColors = r4Colors; break; // green
         }
+
+        /*
+            Another small change
+        */
         
         for (int gy = 0; gy < 18; gy++)
         {
