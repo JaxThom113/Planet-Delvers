@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 698cdc4747d78584e90c9914453da655, type: 3}
+  m_Name: SandyType1
+  m_EditorClassIdentifier: 
+  tiles:
+  - {fileID: 11400000, guid: 2111e29ccb725f14b832fbcbcb09f03a, type: 2}
+  - {fileID: 11400000, guid: 2640818b88b00c94cbbadd2d27d76d45, type: 2}
+  - {fileID: 11400000, guid: bc42ad57ed5b0bc40956f15bf62f886b, type: 2}
+  - {fileID: 11400000, guid: d96e2fbf38336464aa1e8b1e5611e53c, type: 2}
+  colored: 1

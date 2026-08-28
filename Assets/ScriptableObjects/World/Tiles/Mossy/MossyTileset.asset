@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53f0c551ed272c442b3f5b55faf1ce8c, type: 3}
+  m_Name: MossyTileset
+  m_EditorClassIdentifier: 
+  colors:
+  - serializedVersion: 2
+    rgba: 4283891592
+  - serializedVersion: 2
+    rgba: 4281007979
+  - serializedVersion: 2
+    rgba: 4278255436
+  - serializedVersion: 2
+    rgba: 4278243903
+  - serializedVersion: 2
+    rgba: 4278232625
+  type1Tiles: {fileID: 11400000, guid: 2cf51899902a65f4bb77c6c67c911cdc, type: 2}
+  type2Tiles: {fileID: 11400000, guid: 4e0eff637bb04e14bb5aa0ac79051cce, type: 2}
+  type3Tiles: {fileID: 11400000, guid: e12837da79380464f81db928731820f8, type: 2}
+  type4Tiles: {fileID: 11400000, guid: 657f72d3a6180c04bb042a62598a8f2f, type: 2}
